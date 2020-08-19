@@ -1,0 +1,41 @@
+# -*- coding: UTF-8 -*-
+#.@FileName:pipeline.yml
+#.@Date:2020-06-28:10:11
+#.@Aurhor:LuoOu
+
+
+# SETS project path
+# in config/project/$project
+
+
+
+PIPELINE:
+  name:    fcPipeline
+  version: 5.0.0
+# SETS DATABASE type local
+DATABASE:  local
+
+
+# ORDER: top to bottom (local, project, master)
+# if top doesnt exist: next
+# use $this for current location
+PATH:
+    # 1.local (dev & debug)
+    - sandbox: C:\sandbox
+
+    # 2.project (production)
+    - project: D:\project
+
+    # 3.pipeline (master)
+    - master:  $this # D:\plex
+
+PRO_PACKAGES:
+    - packages: C:\fc_Pro\packages
+
+    - aces: C:\fc_Pro\packages\aces
+
+    - render: C:\fc_Pro\packages\aces
+
+
+
+

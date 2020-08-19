@@ -1,0 +1,24 @@
+global proc openDir(string $filePath)
+{
+    if(size($filePath))
+    {
+        if(`filetest -d $filePath`)
+        {
+            int $i;
+            for($i =1;$i<=100;$i++)
+            {
+                $filePath = `substitute "/" $filePath "\\"`;
+            }
+            print $filePath;
+            system("load " + $filePath);
+        }
+        if(`filetest -f $filePath`)
+        {
+            print "当前是一个文件，不是一个文件夹！！\n";
+        }
+        else
+        {
+            print "不存在当前路径！！\n";
+        }
+    }
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Tasks SYSTEM "Tasks-6.0.dtd">
+<!-- eric6 tasks file for project Batch_attrManager -->
+<!-- Saved: 2019-04-16, 17:33:12 -->
+<Tasks version="6.0">
+  <ProjectScanFilter></ProjectScanFilter>
+  <Task priority="1" completed="False" type="2" uid="{bfc313d3-75e0-42aa-9f22-bcd8a9ba0484}">
+    <Summary>WARNING: --convert is an ALPHA feature.\n#\n&quot;</Summary>
+    <Description></Description>
+    <Created>2019-04-16, 12:34:21</Created>
+    <Resource>
+      <Filename>Qt.py</Filename>
+      <Linenumber>1656</Linenumber>
+    </Resource>
+  </Task>
+</Tasks>

@@ -1,0 +1,18 @@
+package: rvpython
+author: luoou
+requires: ''
+version: 1.0
+
+rv: 7.3.0
+optional: true
+
+
+modes: 
+  - file: rvpython
+    load: immediate
+
+description: |
+    <p>
+    This is a simple python package that uses PySide and PyOpenGL.
+    </p>
+

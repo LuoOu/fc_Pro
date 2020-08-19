@@ -1,0 +1,266 @@
+if(`window -ex lsr201709071109`) deleteUI lsr201709071109; 
+
+global proc convertTexturesToRedshift(int $forced)
+{
+    string $redshitTextureProcessor = (`getenv "REDSHIFT_COREDATAPATH"`+"/bin/redshiftTextureProcessor");
+    // find the files
+    string $textures[] = `ls -type "file"`;
+    string $domeLights[] = `ls -type "RedshiftDomeLight"`;
+    string $sprites[] = `ls -type "RedshiftSprite"`;
+    string $normalMaps[] = `ls -type "RedshiftNormalMap"`;
+    string $environments[] = `ls -type "RedshiftEnvironment"`;
+    string $lensDistortions[] = `ls -type "RedshiftLensDistortion"`;
+    int $numberOfNodes = size($textures) + size($domeLights) + size($sprites) + size($normalMaps) + size($environments) + size($lensDistortions);
+
+    global string $gMainProgressBar;  // This is defined on maya startup
+    
+    progressBar -edit
+        -beginProgress
+        -isInterruptable true
+        $gMainProgressBar;
+            
+    if ($forced == 1)
+        print ("Forced Conversion of " + $numberOfNodes + " nodes\n");
+    else
+        print ("Skipped Conversion of " + $numberOfNodes + " nodes\n");
+
+    if (size($textures) > 0)
+    {
+        progressBar -edit
+            -status "Converting textures.. (1/6)"
+            -maxValue `size($textures)`
+            $gMainProgressBar;
+
+        // file textures
+        for ($each in $textures)
+        {
+            if(`progressBar -query -isCancelled $gMainProgressBar`)
+                break;        
+            progressBar -edit
+                -step 1 $gMainProgressBar;
+    
+            string $fileName = `getAttr ($each+".ftn")`;
+            string $colorSpace = `getAttr ($each+".colorSpace")`;
+            if ($colorSpace == "sRGB")
+            {
+                if ($forced == 1)
+                {
+                    print ("Converting "+ $fileName + " to sRGB space\n");
+                    system($redshitTextureProcessor + " " + $fileName + " -s -noskip\n");
+                }
+                else
+                {
+                    print ("Converting "+ $fileName + " to sRGB space\n");
+                    system($redshitTextureProcessor + " " + $fileName + " -s \n");
+                }
+            }
+            else
+            {
+                if ($forced == 1)
+                {
+                    print ("Converting "+ $fileName + " to linear space\n");
+                    system($redshitTextureProcessor + " " + $fileName + " -l -noskip\n");
+                }
+                else
+                {
+                    print ("Converting "+ $fileName + " to linear space\n");
+                    system($redshitTextureProcessor + " " + $fileName + " -l \n");
+                }
+            }
+        }
+    }
+
+    if (size($domeLights) > 0)
+    {
+        progressBar -edit
+            -beginProgress
+            -status "Converting domes.. (2/6)"
+            -maxValue `size($domeLights)`
+            $gMainProgressBar;
+    
+        // domelight maps are always linear
+        for ($domeLight in $domeLights)
+        {
+            if(`progressBar -query -isCancelled $gMainProgressBar`)
+                break;        
+            progressBar -edit
+                -step 1 $gMainProgressBar;
+            if ($forced == 1)
+            {
+                string $domeLightName = `getAttr ($domeLight+".tex0")`;
+                string $backPlateName = `getAttr ($domeLight+".tex1")`;
+                print ("Converting "+ $domeLightName + " to original space\n");
+                system($redshitTextureProcessor + " " + $domeLightName + " -noskip\n");
+                print ("Converting "+ $backPlateName + " to original space\n");
+                system($redshitTextureProcessor + " " + $backPlateName + " -noskip\n");
+            }
+            else
+            {
+                string $domeLightName = `getAttr ($domeLight+".tex0")`;
+                string $backPlateName = `getAttr ($domeLight+".tex1")`;
+                print ("Converting "+ $domeLightName + " to original space\n");
+                system($redshitTextureProcessor + " " + $domeLightName + "\n");
+                print ("Converting "+ $backPlateName + " to original space\n");
+                system($redshitTextureProcessor + " " + $backPlateName + "\n");
+            }
+        }
+    }
+
+    if (size($environments) > 0)
+    {
+        progressBar -edit
+            -beginProgress
+            -status "Converting environments.. (3/6)"
+            -maxValue `size($environments)`
+            $gMainProgressBar;
+    
+        // environments are usually linear
+        for ($environment in $environments)
+            if(`progressBar -query -isCancelled $gMainProgressBar`)
+                break;        
+            progressBar -edit
+                -step 1 $gMainProgressBar;
+        {
+            if ($forced == 1)
+            {
+                string $environmentMapName = `getAttr ($environment+".tex0")`;
+                string $environmentBackPlateName = `getAttr ($environment+".tex1")`;
+                print ("Converting "+ $environmentMapName + " to original space\n");
+                system($redshitTextureProcessor + " " + $environmentMapName + " -noskip\n");
+                print ("Converting "+ $environmentBackPlateName + " to original space\n");
+                system($redshitTextureProcessor + " " + $environmentBackPlateName + " -noskip\n");
+            }
+            else
+            {
+                string $environmentMapName = `getAttr ($environment+".tex0")`;
+                string $environmentBackPlateName = `getAttr ($environment+".tex1")`;
+                print ("Converting "+ $environmentMapName + " to original space\n");
+                system($redshitTextureProcessor + " " + $environmentMapName + "\n");
+                print ("Converting "+ $environmentBackPlateName + " to original space\n");
+                system($redshitTextureProcessor + " " + $environmentBackPlateName + "\n");
+            }
+        }
+    }
+
+    if (size($sprites) > 0)
+    {
+        progressBar -edit
+            -beginProgress
+            -status "Converting sprites.. (4/6)"
+            -maxValue `size($sprites)`
+            $gMainProgressBar;
+    
+        // sprite textures as original color space otherwise it interferes with the sprite color settings
+        for ($sprite in $sprites)
+        {
+            if(`progressBar -query -isCancelled $gMainProgressBar`)
+                break;        
+            progressBar -edit
+                -step 1 $gMainProgressBar;
+    
+            if ($forced == 1)
+            {
+                string $spriteName = `getAttr ($sprite+".tex0")`;
+                print ("Converting "+ $spriteName + " using it's original space\n");
+                system($redshitTextureProcessor + " " + $spriteName + " -noskip\n");
+            }
+            else
+            {
+                string $spriteName = `getAttr ($sprite+".tex0")`;
+                print ("Converting "+ $spriteName + " using it's original space\n");
+                system($redshitTextureProcessor + " " + $spriteName + "\n");
+            }
+        }
+    }
+
+
+    if (size($lensDistortions) > 0)    
+    {
+        progressBar -edit
+            -beginProgress
+            -status "Converting lens distortions.. (5/6)"
+            -maxValue `size($lensDistortions)`
+            $gMainProgressBar;
+        
+        // lens distortion images as original color space otherwise it interferes with the distortion image color settings
+        for ($lensDistortion in $lensDistortions)
+        {
+            if(`progressBar -query -isCancelled $gMainProgressBar`)
+                break;        
+            progressBar -edit
+                -step 1 $gMainProgressBar;
+    
+            if ($forced == 1)
+            {
+                string $lensDistortionName = `getAttr ($lensDistortion+".LDimage")`;
+                print ("Converting "+ $lensDistortionName + " using it's original space\n");
+                system($redshitTextureProcessor + " " + $lensDistortionName + " -noskip\n");
+            }
+            else
+            {
+                string $lensDistortionName = `getAttr ($lensDistortion+".LDimage")`;
+                print ("Converting "+ $lensDistortionName + " using it's original space\n");
+                system($redshitTextureProcessor + " " + $lensDistortionName + "\n");
+            }
+        }
+    }
+        
+    // normal maps are always linear
+    if (size($normalMaps) > 0)
+    {
+        progressBar -edit
+            -beginProgress
+            -status "Converting normal maps.. (6/6)"
+            -maxValue `size($normalMaps)`
+            $gMainProgressBar;
+
+        for ($normalMap in $normalMaps)
+        {
+            if(`progressBar -query -isCancelled $gMainProgressBar`)
+                break;        
+            progressBar -edit
+                -step 1 $gMainProgressBar;
+    
+            if ($forced == 1)
+            {
+                string $normalMapName = `getAttr ($normalMap+".tex0")`;
+                print ("Converting "+ $normalMapName + " to linear space\n");
+                system($redshitTextureProcessor + " " + $normalMapName + " - -noskip\n");
+            }
+            else
+            {
+                string $normalMapName = `getAttr ($normalMap+".tex0")`;
+                print ("Converting "+ $normalMapName + " to linear space\n");
+                system($redshitTextureProcessor + " " + $normalMapName + "\n");
+            }
+        }
+    }
+    progressBar -edit
+        -endProgress
+        $gMainProgressBar;
+
+
+    print ("Done converting "+ $numberOfNodes +" nodes\n");
+} 
+global proc CTTR()
+{
+convertTexturesToRedshift 0;
+}
+global proc UCTTR()
+{
+convertTexturesToRedshift 1;
+}
+
+window    -title "RSÌùÍ¼Ô¤»º´æ"  lsr201709071109 ; 
+columnLayout -adjustableColumn true -bgc 0.1 0.1    0.1;
+separator -style "in" -h 10;
+separator -style "in" -h 5;
+text -label "" -h 10;
+button -label "ºöÂÔÒÑ»º´æ" -command "CTTR" -bgc 0.15 0.15   0.15;
+text -label "";
+
+button -label "»º´æÈ«²¿" -command "UCTTR"-bgc 0.15 0.15   0.15;
+text -label "";
+separator -style "in" -h 5;
+
+showWindow lsr201709071109;

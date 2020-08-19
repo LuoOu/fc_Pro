@@ -1,0 +1,397 @@
+/*
+beginHelpText
+
+SCRIPT: redshiftAOV_UI.mel
+AUTHOR: Joe Harkins (vfxprojoe@gmail.com) 
+VERSION: 1.0
+DATE: 02/05/2016
+
+-=UPDATES=- 
+
+-=DESCRIPTION=-
+
+-=EXAMPLE=-
+
+-=NOTES=-
+
+endHelpText
+*/
+
+//-------------------------------------------------------------
+//---------------------- begin script -------------------------
+//-------------------------------------------------------------
+
+global proc redshiftAOV_PrintNothing(){
+	print("sorry this feature has not been enabled yet! \n");
+}
+
+global proc redshiftAOV_UI(){
+	
+	global float $rsAOVEmbedded;
+	
+	//redshiftAOVHelper_createPropNode();
+	source generateChannelMenu;
+	if(`window -ex redshiftAOV_UI`) deleteUI redshiftAOV_UI;
+	
+	int $h=750;
+	int $w=280;
+	
+	if(`about -os`!="nt") {$h=400;$w=300;};
+	
+	$win = `window -t "AOV管理器" -in "redshiftAOV_UI" -w $w -h $h redshiftAOV_UI`;					
+	$fl = `formLayout`;	
+        	$mcl = `columnLayout -w $w -p $fl -adj on`;
+		string $AOV_List[];
+		string $listed = "";
+		$listed += "World Position";
+		$listed += ",Depth";
+		//$listed += ",Puzzle Matte";
+		$listed += ",Motion Vectors";
+		$listed += ",ObjectID";
+		$listed += ",Diffuse Lighting";
+		$listed += ",Diffuse Lighting Raw";
+		$listed += ",Diffuse Filter";
+		$listed += ",Specular Lighting";
+		$listed += ",Sub Surface Scatter";
+		$listed += ",Reflections";
+		$listed += ",Reflections Raw";
+		$listed += ",Reflections Filter";
+		$listed += ",Refractions";
+		$listed += ",Refractions Raw";
+		$listed += ",Refractions Filter";
+		$listed += ",Emission";
+		$listed += ",Global Illumination";
+		$listed += ",Global Illumination Raw";
+		$listed += ",Caustics";
+		$listed += ",Caustics Raw";
+		$listed += ",Ambient Occlusion";
+		$listed += ",Shadows";
+		$listed += ",Normals";
+		$listed += ",Bump Normals";
+		$listed += ",Matte";
+		$listed += ",Volume Lighting";
+		$listed += ",Volume Fog Tint";
+		$listed += ",Volume Fog Emission";
+		$listed += ",Translucency Lighting Raw";
+		$listed += ",Translucency Filter";
+		$listed += ",Translucency GI Raw";
+		$listed += ",Total Diffuse Lighting Raw";
+		$listed += ",Total Translucency Lighting Raw";
+		$listed += ",Object-Space Positions";
+		$listed += ",Object-Space Bump Normals";
+		$AOV_List = stringToStringArray($listed, ",");	
+		$AOV_List = `sort $AOV_List`;
+
+		$rowM1 = `rowColumnLayout -numberOfColumns 2 -columnWidth 1 ($w*.5) -columnWidth 2 ($w*.5) -p $mcl`;
+		
+		$rowM2 = `rowColumnLayout -numberOfColumns 1 -columnWidth 1 ($w*.5) -p $rowM1`;	
+			separator -h 10 -p $rowM2;
+			text -p $rowM2 -l "可用的 AOV(s)";
+			separator -h 10 -p $rowM2;
+			textScrollList -h 350 -numberOfRows 10 -allowMultiSelection true -p $rowM2 attrList1;
+			for($type in $AOV_List)textScrollList -e -append $type attrList1;
+			
+		separator -h 10 -p $mcl;
+		
+		$rowM3 = `rowColumnLayout -numberOfColumns 1 -columnWidth 1 ($w*.5) -p $rowM1`;			
+			separator -h 10 -p $rowM3;
+			text -p $rowM3 -l "已添加 AOV(s)";
+			separator -h 10 -p $rowM3;
+			textScrollList -h 350 -numberOfRows 10 -sc redshiftAOVHelper_SelectAOVs -allowMultiSelection true -p $rowM3 attrList2;
+			string $aovsThatExist[] = `ls -type "RedshiftAOV"`;
+			for($aovThatExists in $aovsThatExist){
+				textScrollList -e -append $aovThatExists attrList2;
+				string $whatFile = `getAttr ($aovThatExists + ".filePrefix")`;
+				if(`gmatch $whatFile "<BeautyPath>/<BeautyFile>"`){
+					$rsAOVEmbedded = 1;
+					//print(" using default redshift AOV path \n");
+					//setAttr "redshiftProperties.rs_embedValue" 0;
+				}
+				else{
+					$rsAOVEmbedded = 0;
+					//print(" AOV passes are already embedded \n");
+					//setAttr "redshiftProperties.rs_embedValue" 1;
+				}
+			}
+		setParent $fl;
+		setParent $fl;
+		
+		$rowC1 = `rowColumnLayout -numberOfRows 1 -rowHeight 1 30 -p $mcl`;
+		
+		button  -p $rowC1 -l " 创建选择的 AOV(s) " -ann "在可用AOV(s)列表下选择要创建的AOV" -h 25 -w ($w*.5) -c redshiftAOVHelper_CreateSelectedAOVs jhLoadCons1;
+		button  -p $rowC1 -l " 删除选择的 AOV(s)" -ann "这将从加载的AOV列表中删除选定的AOV" -h 25 -w ($w*.5) -c redshiftAOVHelper_deleteSelectedAOVs  rsDeleteAOVBtn;
+	
+		separator -h 10 -p $mcl;
+		
+		$rowC4 = `rowColumnLayout -numberOfRows 1 -rowHeight 1 30 -p $mcl`;
+		text -p $rowC4 -l " 添加AOV后缀 (勾选关闭)  ";
+		checkBox -p $rowC4 -l "" -ann "Embed AOV's into beauty file (ie: multi-channel EXR)" -onc "redshiftAOVHelper_EnbedPasses" -ofc "redshiftAOVHelper_unEnbedPasses" rsEmbedCB;
+		
+		//float $rsPropV = `getAttr "redshiftProperties.rs_embedValue"`;
+		
+		checkBox -e -value $rsAOVEmbedded rsEmbedCB;
+		separator -h 10 -p $mcl;
+
+		button -h 22 -w 200 -p $mcl -l " 创建预设AOV设置" -ann "创建预设AOV设置" -c redshiftBeauty_AOV_maker  jhAddCons1;
+        	separator -h 10 -p $mcl;
+        	
+        	button -h 22 -w 200 -p $mcl -l "创建AO层覆盖" -c "redshiftAO_pass();" -en 1 rsAOLyrBtn;
+        	separator -h 10 -p $mcl;
+		
+        // button -h 22 -w 200 -p $mcl -l "Print AOV Report to Script Editor" -c "rsPrintAOVs();" -en 1 rsPrintRprtBtn;
+        //     separator -h 10 -p $mcl;
+ 
+		button -h 22 -w 200 -p $mcl -l "刷新窗口" -c "redshiftAOV_UI();" -en 1 rsFreshenBtn;
+        	separator -h 10 -p $mcl;
+        	setParent $fl;
+
+	window -e -w $w -h $h -rtf 1 redshiftAOV_UI;
+	showWindow redshiftAOV_UI;
+}
+
+//-------------------------------------------------------------
+
+//redshiftAOVHelper_SelectAOVs checkBox -q -v rsEmbedCB;
+
+
+global proc redshiftAOVHelper_createPropNode(){
+	if(`objExists "redshiftProperties"`){
+		print("found redshiftProperties node \n");
+    	}
+    	else{	
+    		print("created redshiftProperties node \n");
+    		string $rsProp = `createNode "transform" -n "redshiftProperties"`;
+		addAttr -ln "rs_embedValue"  -at bool  $rsProp;
+    	}
+}
+
+
+global proc rsPrintAOVs(){
+	//redshiftAOVHelper_createPropNode();
+	string $aovsThatExist[] = `ls -type "RedshiftAOV"`;
+	for($aovThatExists in $aovsThatExist){
+	print(" FOUND AOV ::: " + $aovThatExists + "\n");
+	}
+	if(`objExists "AO"`)print("FOUND RENDER LAYER(S) ::: Redshift AO Override \n");
+	print("Finished Diagnostics report - please email any questions to JoeHarkins@gmail.com \n");
+}
+
+global proc redshiftAOVHelper_deleteSelectedAOVs(){
+    string $AOV_List[] =`textScrollList -q -si attrList2`;
+    string $a;
+    select -cl;
+    for($a in $AOV_List){
+    	    if(`objExists $a`)delete $a;
+    	    print("Deleting AOV ::: " + $a + "\n");
+    }
+    redshiftAOV_UI();
+}
+
+global proc redshiftAOVHelper_SelectAOVs(){
+    string $AOV_List[] =`textScrollList -q -si attrList2`;
+    string $a;
+    select -cl;
+    for($a in $AOV_List){
+    	    select -add $a;
+    	    print("selecting AOV ::: " + $a + "\n");
+    }
+}
+global proc redshiftAOVHelper_CreateSelectedAOVs(){
+	global float $rsAOVEmbedded;
+	string $AOV_List[] =`textScrollList -q -si attrList1`;
+	string $a;
+	
+	for($a in $AOV_List){
+	    //if(`objExists ("rsAov_"+$a)`){
+	    //	    warning("skipping " + $a + " Redshift AOV because it already exists! \n");
+	    //}
+	   // else{
+		    string $aov = `rsCreateAov -type $a`;
+		    catchQuiet(`rename $aov ($a + "_01")`);
+		    print("creating AOV ::: " + $a + "\n");
+		    //$v = `getAttr "redshiftProperties.rs_embedValue"`;
+		    if($rsAOVEmbedded == 1)redshiftAOVHelper_EnbedPasses();
+	   // }
+	}
+	
+	textScrollList -e -ra attrList2;
+	string $aovsThatExist[] = `ls -type "RedshiftAOV"`;
+	for($aovThatExists in $aovsThatExist){
+		textScrollList -e -append $aovThatExists attrList2;
+	}
+	catchQuiet(`redshiftAddAov`);
+	redshiftAOV_UI();
+}
+
+global proc redshiftAOVHelper_EnbedPasses(){
+	global float $rsAOVEmbedded;
+	$rsAOVEmbedded = 1;
+	//catch (`setAttr "redshiftProperties.rs_embedValue" 1`); 
+	string $aovs[] = `ls -type "RedshiftAOV"`;
+	string $aov;
+	for($aov in $aovs)setAttr -type "string" ($aov + ".filePrefix") "<BeautyPath>/<BeautyFile>";
+}
+
+global proc redshiftAOVHelper_unEnbedPasses(){
+	global float $rsAOVEmbedded;
+	$rsAOVEmbedded = 0;
+	//catch (`setAttr "redshiftProperties.rs_embedValue" 0`); 
+	string $aovs[] = `ls -type "RedshiftAOV"`;
+	string $aov;
+	for($aov in $aovs)setAttr -type "string" ($aov + ".filePrefix") "<BeautyPath>/<BeautyFile>.<RenderPass>";
+}
+
+global proc redshiftALL_AOV_maker(){
+    string $AOV_List[];
+    string $listed = "";
+    $listed += "World Position";
+	$listed += ",Depth";
+	//$listed += ",Puzzle Matte";
+	$listed += ",Motion Vectors";
+	$listed += ",ObjectID";
+	$listed += ",Diffuse Lighting";
+	$listed += ",Diffuse Lighting Raw";
+	$listed += ",Diffuse Filter";
+	$listed += ",Specular Lighting";
+	$listed += ",Sub Surface Scatter";
+	$listed += ",Reflections";
+	$listed += ",Reflections Raw";
+	$listed += ",Reflections Filter";
+	$listed += ",Refractions";
+	$listed += ",Refractions Raw";
+	$listed += ",Refractions Filter";
+	$listed += ",Emission";
+	$listed += ",Global Illumination";
+	$listed += ",Global Illumination Raw";
+	$listed += ",Caustics";
+	$listed += ",Caustics Raw";
+	$listed += ",Ambient Occlusion";
+	$listed += ",Shadows";
+	$listed += ",Normals";
+	$listed += ",Bump Normals";
+	$listed += ",Matte";
+	$listed += ",Volume Lighting";
+	$listed += ",Volume Fog Tint";
+	$listed += ",Volume Fog Emission";
+	$listed += ",Translucency Lighting Raw";
+	$listed += ",Translucency Filter";
+	$listed += ",Translucency GI Raw";
+	$listed += ",Total Diffuse Lighting Raw";
+	$listed += ",Total Translucency Lighting Raw";
+	$listed += ",Object-Space Positions";
+	$listed += ",Object-Space Bump Normals";
+   $AOV_List = stringToStringArray($listed, ",");	
+   string $type;
+   for($type in $AOV_List){
+       print("Creating Redshift AOV ::: " + $type + "\n");
+       rsCreateAov -type $type;
+   }
+	catchQuiet(`redshiftAddAov`);
+}
+
+
+global proc redshiftBeauty_AOV_maker(){
+	
+	//redshiftAOVHelper_createPropNode();
+	global float $rsAOVEmbedded;
+	// createRenderLayer -name "BTY" -number 1 -global;
+	
+	string $AOV_List[];
+	string $listed = "";
+	$listed += "World Position";
+	$listed += ",Bump Normals";
+	$listed += ",Depth";
+	$listed += ",Diffuse Lighting";
+	$listed += ",Diffuse Filter";
+	$listed += ",Specular Lighting";
+	$listed += ",Sub Surface Scatter";
+	$listed += ",Reflections";
+	$listed += ",Refractions";
+	// $listed += ",Emission";
+	$listed += ",Global Illumination";
+	// $listed += ",Caustics";
+	$listed += ",Ambient Occlusion";
+	// $listed += ",Shadows";
+	$listed += ",Normals";
+
+	$AOV_List = stringToStringArray($listed, ",");	
+	string $type;
+	for($type in $AOV_List){
+	    string $aov = `rsCreateAov -type $type`;
+	    catchQuiet(`rename $aov $type`);
+	    
+	    print("creating AOV ::: " + $type + "\n");
+	    //$v = `getAttr "redshiftProperties.rs_embedValue"`;
+	   //if($rsAOVEmbedded == 1)redshiftAOVHelper_EnbedPasses();
+	}
+	
+	catchQuiet(`setAttr "Depth.normalizeZeroToOne" 1`);
+	catchQuiet(`setAttr "Depth.filterMode" 0`);
+	catchQuiet(`setAttr "Depth.scale" 1`);
+	$XX = catchQuiet(`setAttr "Ambient_Occlusion.exrBits" 32`);
+	print $XX
+	textScrollList -e -ra attrList2;
+	string $aovsThatExist[] = `ls -type "RedshiftAOV"`;
+	for($aovThatExists in $aovsThatExist){
+		textScrollList -e -append $aovThatExists attrList2;
+	}
+	redshiftAO_pass();
+	redshiftAOVHelper_EnbedPasses();
+	// catchQuiet(`redshiftAddAov`);
+	// redshiftAOV_UI();
+}
+
+global proc redshiftAO_pass(){
+	createRenderLayer -name "AO" -number 1 -global;
+	string $incand = `createNode RedshiftIncandescent -name "rs_AO_Incadescent"`;
+	string $ao = `createNode RedshiftAmbientOcclusion -name "rs_AO_Texture"`;
+	connectAttr -f ($ao + ".outColor") ($incand + ".color");
+	string $shadingGroup = ($incand + "_SG");
+	sets -renderable true -noSurfaceShader true -empty -name $shadingGroup;
+	defaultNavigation -connectToExisting -source $incand -destination $shadingGroup;
+	
+	hookShaderOverride("AO", "","rs_AO_Incadescent");
+	connectNodeToNodeOverride($incand, $shadingGroup);
+	
+//	hookShaderOverride("layer1", "", "lambert1");	
+//	string $meshes[] = listRelatives("-p",`ls -type "mesh"`);
+//	string $mesh;
+//	select -r $meshes;
+//	hyperShade -assign $incand; 
+	
+	//for($mesh in $meshes)sets -e -addElement $mesh $shadingGroup;
+//	select -cl;
+}
+	
+//redshiftAOV_UI();
+
+//print("::: CREATED DEFAULT AOVS FOR REDSHIFT ::: \n");
+
+global proc redshiftAOV_Helper()
+{
+	string $URL = "http://docs.redshift3d.com/Default.html";
+	showHelp -absolute $URL;
+}
+
+/*
+
+DiffuseFilter
+DiffuseLightingRaw
+GlobalIlluminationRaw *
+SubsurfaceScatter *
+Reflections
+Refractions
+SpecularLighting
+AO**
+Caustics *
+Emissions *
+Depth (There's a checkbox for Depth that says "Normalize (0 to 1)". 
+Lets have that on by default, Filter to Full, and Scale to 1.0)
+Normals
+
+*/
+
+redshiftAOV_UI();
+//-------------------------------------------------------------
+//----------------------- end script --------------------------
+//-------------------------------------------------------------

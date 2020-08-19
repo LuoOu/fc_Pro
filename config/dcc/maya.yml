@@ -1,0 +1,266 @@
+#*********************************************************************
+# content = maya config
+# version = 0.1.0
+# date    = 2019-10-06
+#
+# license = MIT <https://github.com/alexanderrichtertd>
+# author  = Alexander Richter <alexanderrichtertd.com>
+#*********************************************************************
+
+
+version: &MAYA_VERSION 2017
+path:    &MAYA_PATH !join ["C:/Program Files/Autodesk/Maya", *MAYA_VERSION, /bin/maya.exe]
+
+# start command
+start: !join ['start "" "', *MAYA_PATH, '"'] # {} replaced by open_file
+
+renderer:
+renderer_path:
+
+
+# Added BEFORE software starts
+ENV:
+
+
+  REDSHIFT_COREDATAPATH:
+    - !env [PRO_PACKAGES, /render/redshift/2.5.48/win/maya2017]
+  REDSHIFT_PLUG_IN_PATH:
+    - !env [REDSHIFT_COREDATAPATH, /Plugins/Maya/2017/nt-x86-64]
+  REDSHIFT_SCRIPT_PATH:
+    - !env [REDSHIFT_COREDATAPATH, /Plugins/Maya/Common/scripts]
+  REDSHIFT_XBMLANGPATH:
+    - !env [REDSHIFT_COREDATAPATH, /Plugins/Maya/Common/icons]
+  REDSHIFT_RENDER_DESC_PATH:
+    - !env [REDSHIFT_COREDATAPATH, /Plugins/Maya/Common/rendererDesc]
+  REDSHIFT_CUSTOM_TEMPLATE_PATH:
+    - !env [REDSHIFT_COREDATAPATH, /Plugins/Maya/Common/scripts/NETemplates]
+  REDSHIFT_MAYAEXTENSIONSPATH:
+    - !env [REDSHIFT_PLUG_IN_PATH, /extensions]
+  REDSHIFT_PROCEDURALSPATH:
+    - !env [REDSHIFT_COREDATAPATH, /Procedurals]
+
+
+  PATH:
+    - !env [REDSHIFT_COREDATAPATH]
+
+  PYTHONPATH:
+    - !env [SOFTWARE_PATH]
+    - !env [SOFTWARE_PATH, /scripts]
+    - !env [SOFTWARE_PATH, /plugins]
+    - !env [REDSHIFT_SCRIPT_PATH]
+#    - !env [SOFTWARE_PATH, /shelf]
+
+  MAYA_SCRIPT_PATH:
+    - !env [REDSHIFT_SCRIPT_PATH]
+    - !env [SOFTWARE_PATH, /scripts]
+
+  MAYA_PLUG_IN_PATH:
+    - !env [SOFTWARE_PATH, /plugins]
+    - !env [REDSHIFT_PLUG_IN_PATH]
+
+#  MAYA_SHELF_PATH:
+#    - !env [SOFTWARE_PATH, /shelf]
+
+  # SPLASHSCREEN & IMG PATH
+  XBMLANGPATH:
+    - !env [REDSHIFT_XBMLANGPATH]
+    - !env [SOFTWARE_PATH, /icons]
+    - !env [SOFTWARE_PATH, /icons/shelf]
+
+  MAYA_RENDER_DESC_PATH:
+    - !env [REDSHIFT_RENDER_DESC_PATH]
+  MAYA_CUSTOM_TEMPLATE_PATH:
+    - !env [REDSHIFT_CUSTOM_TEMPLATE_PATH]
+
+  # DISABLE close reports
+  MAYA_DISABLE_CIP: 1
+  MAYA_DISABLE_CER: 1
+
+
+
+#*****************************************************************************************************************************
+#*****************************************************************************************************************************
+MENU:
+  - Open Folder:
+      - open_scene_folder:   menuItem(p="{}", l='Open Scene Folder', c='import pipefunc; pipefunc.open_folder(cmds.file(q=True, sceneName=True))')
+      - open_project_folder: menuItem(p="{}", l='Open Project Folder', c='import pipefunc;from tank import Tank; pipefunc.open_folder(Tank().data_project["path"])')
+#      - sub_break:           menuItem(p="{}", d=True)
+  - divider: menuItem(p="{}", divider=True )
+#
+#  - break:  menuItem(p="{}", d=True)
+  - Load: menuItem(p="{}", l='Load')
+
+  - Save: menuItem(p="{}", l='Save')
+
+  - Saveas: menuItem(p="{}", l='Save as')
+
+  - Upversion: menuItem(p="{}", l='Up version')
+
+  - divider: menuItem( p="{}", divider=True )
+
+  - Submit: menuItem( p="{}", l='Submit')
+
+  - Publish: menuItem( p="{}", l='Publish')
+
+  - divider: menuItem( p="{}",divider=True )
+  - Check: menuItem(p="{}", l='Check')
+  - Utils:
+      thumbnail: menuItem(p="{}", l='thumbnail', c='import maya_utils; maya_utils.position_selected()')
+      playblast: menuItem(p="{}", l='Playblast', c='from ANIM import playblast;playblast.start()')
+
+  - Tools: menuItem(p="{}", l='ToolsPanel', c='from fcLib.appLib import fcToolsPanel; fcToolsPanel.main()')
+
+  - divider: menuItem(p="{}", divider=True )
+
+  - reload_pipeline:     menuItem(p="{}", l='Reload PipelineMenu', c='import maya_utils;import maya.cmds as cmds;cmds.evalDeferred("maya_utils.load_menus()")')
+#
+#  - break:  menuItem(p="{}", d=True)
+#
+#  - Animation:
+#      playblast: menuItem(p="{}", l='Playblast', c='from ANIM import playblast;playblast.start()')
+#  - Animation:
+#      playblast: menuItem(p="{}", l='Playblast', c='from ANIM import playblast;playblast.start()')
+#
+#  - Light:
+#
+#  - break:  menuItem(p="{}", d=True)
+#
+#  - Report: menuItem(p="{}", l='Report', c='import pipefunc; pipefunc.help("report")')
+#  - Help:   menuItem(p="{}", l='Help', c='import pipefunc; pipefunc.help()')
+
+
+
+#*****************************************************************************************************************************
+SCRIPTS:
+  Mod:
+    - Shader_Name_link: Shader_Name
+    - MayaClarisseBridge_link: MayaClarisseBridge
+    - DW_MaterialManager_link: DW_MaterialManager
+    - NitroPoly_link: NitroPoly
+    - autoPlacePivot_link: autoPlacePivot
+    - Rename_link: Rename
+    - GeometryCache_WindCycle_link: 集合缓存动态缓存
+
+  Rig:
+    - Animate8_SetupToolWin_link: 水手工具箱
+    - AdvancedSkeleton_link: AdvancedSkeleton
+    - MG_Picker_Designer_link: MG_Picker设计师
+
+  Ani:
+    - MG_Picker_link: MG_Picker动画师
+
+  Lgt:
+    - redshiftPuzzleMatte_link: RsPuzzleMatte管理器
+    - CreateRsID_AOV_link: 创建RsID
+    - redshiftAovQuickLoad_link: 默认渲染窗AOV可见
+    - redshiftAOV_link: RsAOV管理器
+
+  Other:
+    - AssetScript_L_link: 旧版资产库
+    - Batch_redshiftTextureProcessor_link: 批量转换RS贴图缓存
+    - attrManager_link: 批量改属性
+    - ezMel2Python_link: MEL转PY
+    - Batch_attrManager_link: 批量属性
+    - redshift_playblast_link: redshift_playblast
+    - onModelChange3dc_link: onModelChange3dc报错修复
+    - FCmayabatch_link: maya后台批处理
+#
+#  SHD:
+#    - temp: l='Nothing', command='print("nothing")', dcc='', image='shelf_default.png'
+#
+#  RIG:
+#    - temp: l='Nothing', command='print("nothing")', dcc='', image='shelf_default.png'
+#
+#  LAY:
+#    - snap:      l='Snap to first selection', command='import maya_utils;reload(maya_utils); maya_utils.position_selected()', dcc='', image='shelf_snap.png'
+#    - playblast: l='Playblast', command='from ANIM import playblast;reload(playblast); playblast.start()', dcc='', image='shelf_playblast.png'
+#
+#  ANIM:
+#    - snap:      l='Snap to first selection', command='import maya_utils;reload(maya_utils); maya_utils.position_selected()', dcc='', image='shelf_snap.png'
+#    - playblast: l='Playblast', command='from ANIM import playblast;reload(playblast); playblast.start()', dcc='', image='shelf_playblast.png'
+#
+#  LIGHT:
+#    - render_work:    l='Rendersettings - Work', command='Tank().software.scene_setup("RENDER", WORK")', dcc='', image='shelf_render_work.png'
+#    - render_preview: l='Rendersettings - Work', command='Tank().software.scene_setup("RENDER", "PREVIEW")', dcc='', image='shelf_render_preview.png'
+#    - render_deliver: l='Rendersettings - Work', command='Tank().software.scene_setup("RENDER", "DELIVER")', dcc='', image='shelf_render_deliver.png'
+#    - break:          width=1, l='break', command='print("empty")', dcc='', image='separator.png'
+#    - light_linker:   l='Light Linker', command='from LGT import light_linker;reload(light_linker);light_linker.start()', dcc='', image='shelf_light_linker.png'
+
+
+
+# #*****************************************************************************************************************************
+# #*****************************************************************************************************************************
+RENDER:
+
+  DEFAULT:
+    # - defaultArnoldRenderOptions.AASamples: 2
+    - '' : ''
+
+  WORK:
+    - '' : ''
+
+
+  PREVIEW:
+    - '' : ''
+
+
+  DELIVER:
+    - '' : ''
+
+
+  CUSTOM:
+    - '' : ''
+
+
+
+
+# #*****************************************************************************************************************************
+# #*****************************************************************************************************************************
+SETUP:
+
+  DEFAULT:
+    # - defaultResolution.width  : Tank().data_project['resolution'][0]
+    # - defaultResolution.height : Tank().data_project['resolution'][1]
+
+    - defaultRenderGlobals.animation : 1
+    - defaultRenderGlobals.putFrameBeforeExt : 1
+    - defaultRenderGlobals.extensionPadding : 4
+    # - FPS : 24: film
+    # - unit : cm
+
+  GEO:
+
+
+  SHD:
+
+
+  RIG:
+
+
+  LAY:
+
+
+  ANIM:
+
+
+  LIGHT:
+
+
+
+
+#*****************************************************************************************************************************
+# SPECIFIC settings
+
+GROUPS:
+    ANIM_GRP:
+      - char_GRP
+      - props_GRP
+      - fx_GRP
+    LAYOUT:
+      - props_GRP
+      - sets_GRP
+    CAM_GRP:
+      - ''
+    REVIEW_GRP:
+      - proxy_GRP
+      - playblast_GRP

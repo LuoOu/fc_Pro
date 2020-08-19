@@ -1,0 +1,16 @@
+v2.02
+-增加了插件运行报错，提示正确放置路径
+
+-重新修改UI排布
+
+-在MaterialConverter模块下，增加原始材质和转换材质互换的功能
+
+-增加alsurface 和rsMaterial材质转换过程中对3s的支持
+
+v2.02b
+
+-改了互换材质UI图标
+
+-改了帮助文档路径
+
+-增加了对VRayAlSurface材质的支持

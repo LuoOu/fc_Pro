@@ -1,0 +1,8 @@
+//**********返回选择的对象给python
+global proc string XuanZeDeMoXing()
+{
+    string $xuanzde[]=`ls -sl`;
+    global string $ZuiZhongYaoDe;
+    string $ZuiZhongYaoDe=($xuanzde[0]);
+    return $ZuiZhongYaoDe;
+}

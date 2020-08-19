@@ -1,0 +1,17 @@
+{
+  "usingMayaColorManagement": true, 
+  "udim": true, 
+  "heightMapAsDisplacement": true, 
+  "targetRadioCollection": "target_classic_gamma_2point2", 
+  "MaterialConverter": false, 
+  "materialNameInput": "carbinet", 
+  "LinearWorkFlow": false, 
+  "convertFromOptionMenu": "VRayMtl", 
+  "origRadioCollection": "orig_use_maya_colorSpace", 
+  "userDefinedPathTextField": "", 
+  "createMaterial": "aiStandard", 
+  "heightMap_8bit": false, 
+  "heightDepth": "1", 
+  "MaterialImport": true, 
+  "convertToOptionMenu": "aiStandardSurface"
+}

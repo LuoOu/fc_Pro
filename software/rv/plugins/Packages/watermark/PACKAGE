@@ -1,0 +1,22 @@
+package: watermark
+author: luoou
+organization: 
+contact: 
+version: 1.0
+requires: ''
+rv: 7.3.0
+optional: true
+url: 
+
+modes: 
+  - file: watermark.py
+    menu: 'Tools/watermark'
+    shortcut: ''
+    event: ''
+    load: immediate
+
+description: |
+    <p>
+    This is a simple python package that uses PySide and PyOpenGL.
+    </p>
+

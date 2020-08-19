@@ -1,0 +1,22 @@
+#*********************************************************************
+# content = RV config
+# version = 0.1.0
+# date    = 2019-10-06
+#
+# license = MIT <https://github.com/alexanderrichtertd>
+# author  = Alexander Richter <alexanderrichtertd.com>
+#*********************************************************************
+
+
+
+version:  &RV_VERSION 7.3.0
+path: &RV_PATH !join ["C:/Program Files/Shotgun/RV-",*RV_VERSION,/bin/rv.exe]
+
+start: !join ['start "" "', *RV_PATH, '"']
+
+
+ENV:
+  PYTHONPATH:
+    - !env [SOFTWARE_PATH]
+  RV_SUPPORT_PATH:
+    - !env [SOFTWARE_PATH, /plugins]

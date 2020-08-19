@@ -1,0 +1,70 @@
+global proc openMayaFile(string $filePath)
+{
+    string $myConfirm = `confirmDialog -title "提示" -message "请确认当前文件是否需要保存!  如果已经保存，请按Yes，\n如果没有保存，请按No取消操作，保存之后再打开新文件！" -icon "information"
+                    -button "Yes" -button "No" -defaultButton "Yes"
+                    -cancelButton "No" -dismissString "No"`;
+    if ($myConfirm == "Yes")
+    {
+        print ("正在打开文件......请等待......\n");
+        file -force -open $filePath;
+    }
+}
+
+global proc openMayaFileWithNewMaya(string $filePath)
+{
+    string $mayaExePath=`getenv "MAYA_LOCATION"` + "/bin/maya.exe"; 
+    system ( "start " +$mayaExePath + " " + $filePath);
+}
+
+global proc loadServerFileToLocal(string $serverFile,string $localPath)
+{
+    string $temp[];
+    tokenize $serverFile "/" $temp;
+    string $fileName = $temp[size($temp)-1]; 
+    if(!`filetest -d $localPath`)
+    {
+        sysFile -md $localPath; 
+    }
+    string $filePath = $localPath + "/" + $fileName;
+    sysFile -copy $filePath $serverFile ;
+    information "下载成功！";
+}
+
+global proc uploadLocalFileToServer(string $localFile,string $serverPath)
+{
+    string $temp[];
+    string $tempName[];
+    string $versions[];
+    int $index;
+    string $fileName_ok;
+    string $fileName_final;
+    string $historyName;
+    string $bakeDate = `date -format "YYYY.MM.DD.hhh.mmm.sss"`;
+    tokenize $localFile "/" $temp;
+    string $fileName = $temp[size($temp)-1]; 
+    //string $fileName = "RL_sc001_shot001_an_XXX_001.mb";
+    tokenize $fileName "_" $tempName;
+    tokenize $tempName[size($tempName)-1] "." $versions;
+    $fileName_ok = $tempName[0];
+    for($index =1;$index < (size($tempName)-1);$index ++)
+    {
+        $fileName_ok =  $fileName_ok + "_" + $tempName[$index];   
+    }
+    $fileName_final = $serverPath + "/" + $fileName_ok + "_ok." + $versions[1];
+    $historyName = $serverPath + "/history/" + $fileName_ok + "_ok_" + $bakeDate + "." + $versions[1];
+    print $fileName_final ;
+    print "\n";
+    print $historyName;
+    if(!`filetest -d ($serverPath + "/history/")`)
+    {
+        sysFile -makeDir ($serverPath + "/history/");
+    }
+    if(`filetest -f $fileName_final`)
+    {
+        sysFile -move $historyName $fileName_final;
+        print "success bake";
+    }
+    sysFile -copy $fileName_final $localFile;
+    
+    information($temp[size($temp)-1] +"   上传文件到服务器成功!并重命名为： " + $fileName_final);    
+}

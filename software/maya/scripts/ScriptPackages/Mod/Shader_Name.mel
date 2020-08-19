@@ -1,0 +1,99 @@
+
+if(`window -ex lsr_15`) deleteUI lsr_15; 
+global proc RENAMD()
+{
+global string $myTextFieldButtonGrp;
+$name = `textField -q -text $myTextFieldButtonGrp`;
+
+		select -cl;	
+		hyperShadePanelMenuCommand("hyperShadePanel1", "selectShadingGroupsAndMaterials");
+		select -d -ne initialShadingGroup ;
+		select -d -ne initialParticleSE ;
+		select -d shaderGlow1 ;
+		select -d particleCloud1 ;
+		select -d lambert1 ;
+		   string $see[] = `ls -sl`;
+		   for ($i = 0;$i <size($see);$i++) 
+		   {
+		   int $j = $i +1;
+		   rename $see[$i] ($name + "_ShaderNode_" + $j);
+		   }
+
+		hyperShadePanelMenuCommand("hyperShadePanel1", "selectTextures");
+		   string $see[] = `ls -sl`;
+		   for ($i = 0;$i <size($see);$i++) 
+		   {
+		   int $j = $i +1;
+		   rename $see[$i] ($name + "_ShaderNode_" + $j);
+		   }
+
+		hyperShadePanelMenuCommand("hyperShadePanel1", "selectUtilities");
+		   string $see[] = `ls -sl`;
+		   for ($i = 0;$i <size($see);$i++) 
+		   {
+		   int $j = $i +1;
+		   rename $see[$i] ($name + "_ShaderNode_" + $j);
+		   }
+
+		select -cl;		
+}
+
+
+global proc GENJUCAIZHIMINGM()
+{	
+
+$name=basenameEx(`file -q -sn`);
+		   
+		select -cl;	
+		
+		hyperShadePanelMenuCommand("hyperShadePanel1", "selectShadingGroupsAndMaterials");
+		select -d -ne initialShadingGroup ;
+		select -d -ne initialParticleSE ;
+		select -d shaderGlow1 ;
+		select -d particleCloud1 ;
+		select -d lambert1 ;
+		   string $see[] = `ls -sl`;
+		   for ($i = 0;$i <size($see);$i++) 
+		   {
+		   int $j = $i +1;
+		   rename $see[$i] ($name + "_ShaderNode_" + $j);
+		   }
+
+		hyperShadePanelMenuCommand("hyperShadePanel1", "selectTextures");
+		   string $see[] = `ls -sl`;
+		   for ($i = 0;$i <size($see);$i++) 
+		   {
+		   int $j = $i +1;
+		   rename $see[$i] ($name + "_ShaderNode_" + $j);
+		   }
+
+		hyperShadePanelMenuCommand("hyperShadePanel1", "selectUtilities");
+		   string $see[] = `ls -sl`;
+		   for ($i = 0;$i <size($see);$i++) 
+		   {
+		   int $j = $i +1;
+		   rename $see[$i] ($name + "_ShaderNode_" + $j);
+		   }
+		   
+		select -cl;	
+}
+
+window -title "材质贴图节点一键更名" lsr_15 ; 
+columnLayout -adjustableColumn true -bgc 0.17 0.2    0.25;
+
+
+separator -style "in" -h 5;
+separator -style "in" -h 10;
+text -label "\n【       输入名字后直接确认      】\n";
+
+
+rowLayout   -nc 2 		-adj 2 XXXX ;
+$myTextFieldButtonGrp = `textField     -bgc 0.11 0.11 0.12  -w 230 -text ""`;
+button -label "确 认" -command "RENAMD()" -bgc 0.25 0.3   0.35;   
+setParent ..;
+
+button -label "根据文件命名" -command "GENJUCAIZHIMINGM"-bgc 0.25 0.3   0.35;
+text -label "" ;
+separator -style "in" -h 5;
+
+showWindow lsr_15;
