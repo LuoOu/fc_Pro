@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>729</width>
+    <width>720</width>
     <height>300</height>
    </rect>
   </property>
@@ -226,6 +226,12 @@
        <height>0</height>
       </size>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <layout class="QVBoxLayout" name="layMeta">
       <property name="spacing">
        <number>0</number>
@@ -273,7 +279,11 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QComboBox" name="combVariant"/>
+          <widget class="QComboBox" name="combVariant">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QComboBox" name="combversion"/>

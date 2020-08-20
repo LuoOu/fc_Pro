@@ -2,17 +2,17 @@
 
 # Form implementation generated from reading ui file 'fcLocalTask.ui'
 #
-# Created: Thu Aug 20 17:20:02 2020
+# Created: Thu Aug 20 17:36:43 2020
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from pyside.PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_FcLoadTask(object):
     def setupUi(self, FcLoadTask):
         FcLoadTask.setObjectName("FcLoadTask")
-        FcLoadTask.resize(729, 300)
+        FcLoadTask.resize(720, 300)
         FcLoadTask.setMinimumSize(QtCore.QSize(720, 300))
         FcLoadTask.setAutoFillBackground(False)
         FcLoadTask.setStyleSheet("")
@@ -90,6 +90,7 @@ class Ui_FcLoadTask(object):
         self.layMain.addWidget(self.widgeteStep)
         self.widgeteMeta = QtWidgets.QWidget(FcLoadTask)
         self.widgeteMeta.setMinimumSize(QtCore.QSize(200, 0))
+        self.widgeteMeta.setMaximumSize(QtCore.QSize(200, 16777215))
         self.widgeteMeta.setObjectName("widgeteMeta")
         self.layMeta = QtWidgets.QVBoxLayout(self.widgeteMeta)
         self.layMeta.setSpacing(0)
@@ -104,6 +105,7 @@ class Ui_FcLoadTask(object):
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.combVariant = QtWidgets.QComboBox(self.horizontalWidget)
+        self.combVariant.setEnabled(True)
         self.combVariant.setObjectName("combVariant")
         self.horizontalLayout.addWidget(self.combVariant)
         self.combversion = QtWidgets.QComboBox(self.horizontalWidget)

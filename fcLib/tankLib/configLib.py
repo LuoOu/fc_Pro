@@ -117,16 +117,16 @@ class Tank(object):
 
         return ''
 
-    # def get_img_path(self, end_path='btn/default'):
-    #     if '.' in end_path:
-    #         img_format = ''
-    #     else:
-    #         img_format = self.data_project['EXTENSION']['icons']
-    #
-    #     path = self.get_pipeline_path('img/{}.{}'.format(end_path, img_format))
-    #     if not path: path = self.get_pipeline_path('img/{}/default.{}'.format(os.path.dirname(end_path), img_format))
-    #     if not path: path = self.get_pipeline_path('img/btn/default.{}'.format(img_format))
-    #     return path
+    def get_img_path(self, end_path='btn/default'):
+        if '.' in end_path:
+            img_format = ''
+        else:
+            img_format = self.data_project['EXTENSION']['icons']
+
+        path = self.get_pipeline_path('img/{}.{}'.format(end_path, img_format))
+        if not path: path = self.get_pipeline_path('img/{}/default.{}'.format(os.path.dirname(end_path), img_format))
+        if not path: path = self.get_pipeline_path('img/btn/default.{}'.format(img_format))
+        return path
 
 
     #*********************************************************************

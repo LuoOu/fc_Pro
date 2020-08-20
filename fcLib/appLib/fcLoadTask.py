@@ -170,7 +170,9 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
         self.lstClass.clear()
         self.lstEntity.clear()
         self.lstStep.clear()
+        self.clear_meta()
         self.change_lstModule()
+
         # self.change_lstClass()
         # self.wgPreview.edtComment.setReadOnly(True)
         #
@@ -261,9 +263,9 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
 
     def change_lstClass(self):
         new_path    = os.environ['FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text()
-        print new_path
+
         tmp_content = folder.get_file_list(new_path)
-        print tmp_content
+
 
         self.lstClass.clear()
         if tmp_content:
@@ -348,35 +350,39 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
     #*********************************************************************
     # FUNCTIONS
     def fill_meta(self):
-        self.wgPreview.lblTitle.setText(self.file_name)
-        self.wgPreview.lblDate.setText(str(datetime.datetime.fromtimestamp(os.path.getmtime(self.load_file))).split(".")[0])
-        self.wgPreview.lblSize.setText(str("{0:.2f}".format(os.path.getsize(self.load_file)/(1024*1024.0)) + " MB"))
-
-        self.extension = self.wgLoad.lstFiles.currentItem().text().split('.')[-1]
-        if self.extension in self.data['script'][TITLE].get('img'): software_img = "software/img"
-        else: software_img = "software/" + self.software_format[self.extension]
-        if self.file_data and self.file_data.has_key(self.wgLoad.lstFiles.currentItem().text()):
-            current_file = self.file_data[self.wgLoad.lstFiles.currentItem().text()]
-            comment = current_file.get('comment')
-            user_id = current_file.get('user')
-        else:
-            comment = ''
-            user_id = 'unknown'
-
-        self.wgPreview.edtComment.setPlainText(comment)
-        self.wgPreview.lblUser.setText(user_id)
-        self.wgPreview.lblSoftwareIcon.setPixmap(QtGui.QPixmap(QtGui.QImage(Tank().get_img_path(software_img))))
-        self.wgPreview.lblUserIcon.setPixmap(QtGui.QPixmap(QtGui.QImage(Tank().get_img_path('user/' + user_id))))
+        pass
+        # self.wgPreview.lblTitle.setText(self.file_name)
+        # self.wgPreview.lblDate.setText(str(datetime.datetime.fromtimestamp(os.path.getmtime(self.load_file))).split(".")[0])
+        # self.wgPreview.lblSize.setText(str("{0:.2f}".format(os.path.getsize(self.load_file)/(1024*1024.0)) + " MB"))
+        #
+        # self.extension = self.wgLoad.lstFiles.currentItem().text().split('.')[-1]
+        # if self.extension in self.data['script'][TITLE].get('img'): software_img = "software/img"
+        # else: software_img = "software/" + self.software_format[self.extension]
+        # if self.file_data and self.file_data.has_key(self.wgLoad.lstFiles.currentItem().text()):
+        #     current_file = self.file_data[self.wgLoad.lstFiles.currentItem().text()]
+        #     comment = current_file.get('comment')
+        #     user_id = current_file.get('user')
+        # else:
+        #     comment = ''
+        #     user_id = 'unknown'
+        #
+        # self.wgPreview.edtComment.setPlainText(comment)
+        # self.wgPreview.lblUser.setText(user_id)
+        # self.wgPreview.lblSoftwareIcon.setPixmap(QtGui.QPixmap(QtGui.QImage(Tank().get_img_path(software_img))))
+        # self.wgPreview.lblUserIcon.setPixmap(QtGui.QPixmap(QtGui.QImage(Tank().get_img_path('user/' + user_id))))
 
     def clear_meta(self):
-        self.wgPreview.lblUser.setText('')
-        self.wgPreview.lblTitle.setText('')
-        self.wgPreview.lblDate.setText('')
-        self.wgPreview.lblSize.setText('')
-        self.wgPreview.edtComment.setPlainText('')
-        self.set_open_folder('')
-        self.wgPreview.lblSoftwareIcon.setPixmap(QtGui.QPixmap(QtGui.QImage('')))
-        self.wgPreview.lblUserIcon.setPixmap(QtGui.QPixmap(QtGui.QImage('')))
+        self.combVariant.clear()
+        self.combVariant.hide()
+        self.combversion.clear()
+        self.combversion.hide()
+        self.labelPreview.clear()
+        # self._scaled = Tank().get_data('script')[self.lstModule.currentItem().text()]
+        # print self._scaled
+        self.labelPreview.setPixmap(QtGui.QPixmap(QtGui.QImage(Tank().get_img_path('btn/thumbnail'))).scaled(200, 200))
+        self.btnCreate.hide()
+        self.btnLoad.hide()
+        self.btnSave.hide()
 
 
 def create():
