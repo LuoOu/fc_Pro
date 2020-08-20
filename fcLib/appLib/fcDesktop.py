@@ -82,8 +82,8 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
         menu.addSeparator()
         #
-        menuItem = menu.addAction(QtGui.QIcon(envdict['IMG_PATH'] + '/btn/btn_folder'), 'Browse')
-        menuItem.triggered.connect(self.press_btnBrowse)
+        menuItem = menu.addAction(QtGui.QIcon(envdict['IMG_PATH'] + '/btn/btn_folder'), 'Load')
+        menuItem.triggered.connect(self.press_btnLoad)
 
         menu.addSeparator()
 
@@ -135,7 +135,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         dcclanch.start('rv')
 
 
-    def press_btnBrowse(self):
+    def press_btnLoad(self):
         from fcLib.appLib import fcLoadTask
         reload(fcLoadTask)
         self.fcLoadTask = fcLoadTask.FcLoadTask()

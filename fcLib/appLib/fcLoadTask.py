@@ -77,7 +77,7 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
         super(FcLoadTask,self).__init__(*args, **kwargs)
 
         for entry in QtWidgets.QApplication.allWidgets():
-            print entry.objectName()
+            # print entry.objectName()
             try:
                 if entry.objectName() == "FcLoadTask":
                     entry.close()
@@ -301,56 +301,86 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
     @Slot()
     def on_lstStep_itemSelectionChanged(self):
         self.fill_meta()
+        self.change_combVariant()
 
-    def change_lstStatus(self):
-        if self.scene_steps < 5: part_path = ''
-        else: part_path = self.wgLoad.lstAsset.currentItem().text() + '/'
 
-        if not self.wgLoad.lstStatus.currentItem() or not self.wgLoad.lstTask.currentItem(): return
+    def change_combVariant(self):
+        new_path = os.environ[
+                       'FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text() + '/' + self.lstStep.currentItem().text()
+        tmp_content = folder.get_file_list(new_path)
 
-        self.file_dir = self.load_dir + '/' + self.wgLoad.lstSet.currentItem().text() + '/' + part_path + self.wgLoad.lstTask.currentItem().text() + '/' + self.wgLoad.lstStatus.currentItem().text()
-        tmp_content   = folder.get_file_list(self.file_dir, extension=True)
+        self.combVariant.clear()
+        if tmp_content:
+            self.combVariant.addItems(sorted(tmp_content))
+            self.combVariant.setCurrentIndex(0)
 
-        self.wgLoad.lstFiles.clear()
-        if not tmp_content: return
+    @Slot()
+    def on_combVariant_currentIndexChanged(self):
+        self.change_combversion()
 
-        file_list = []
-        for file in tmp_content:
-            if os.path.splitext(file)[1][1:] in self.software_keys: file_list.append(file)
 
-        if file_list:
-            if os.path.exists(self.file_dir + Tank().data_project['META']['file']):
-                self.file_data = Tank().get_yml_file(self.file_dir + Tank().data_project['META']['file'])
-            else: self.file_data = ''
+    def change_combversion(self):
+        new_path = os.environ[
+                       'FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text() + '/' + self.lstStep.currentItem().text() + '/' + self.combVariant.currentText()
+        tmp_content = folder.get_file_list(new_path)
 
-            self.wgLoad.lstFiles.addItems(sorted(file_list, reverse=True))
-            self.wgLoad.lstFiles.setCurrentRow(0)
+        self.combversion.clear()
+        if tmp_content:
+            self.combversion.addItems(sorted(tmp_content))
+            self.combversion.setCurrentIndex(0)
+    # def change_lstStatus(self):
+    #     if self.scene_steps < 5: part_path = ''
+    #     else: part_path = self.wgLoad.lstAsset.currentItem().text() + '/'
+    #
+    #     if not self.wgLoad.lstStatus.currentItem() or not self.wgLoad.lstTask.currentItem(): return
+    #
+    #     self.file_dir = self.load_dir + '/' + self.wgLoad.lstSet.currentItem().text() + '/' + part_path + self.wgLoad.lstTask.currentItem().text() + '/' + self.wgLoad.lstStatus.currentItem().text()
+    #     tmp_content   = folder.get_file_list(self.file_dir, extension=True)
+    #
+    #     self.wgLoad.lstFiles.clear()
+    #     if not tmp_content: return
+    #
+    #     file_list = []
+    #     for file in tmp_content:
+    #         if os.path.splitext(file)[1][1:] in self.software_keys: file_list.append(file)
+    #
+    #     if file_list:
+    #         if os.path.exists(self.file_dir + Tank().data_project['META']['file']):
+    #             self.file_data = Tank().get_yml_file(self.file_dir + Tank().data_project['META']['file'])
+    #         else: self.file_data = ''
+    #
+    #         self.wgLoad.lstFiles.addItems(sorted(file_list, reverse=True))
+    #         self.wgLoad.lstFiles.setCurrentRow(0)
 
-    def change_lstFiles(self):
-        self.extension = self.wgLoad.lstFiles.currentItem().text().split('.')[-1]
-        self.file_name = self.wgLoad.lstFiles.currentItem().text().split('.')[0]
-
-        if self.extension in self.data['script'][TITLE]['img']:
-            self.preview_img_path = self.file_dir + '/' + self.wgLoad.lstFiles.currentItem().text()
-        else:
-            self.preview_img_path = self.file_dir + '/' + Tank().data_project['META']['dir'] + '/' + self.file_name + '.' + self.data['project']['EXTENSION']['thumbnail']
-
-        self.load_file = self.file_dir + '/' + self.wgLoad.lstFiles.currentItem().text()
-
-        if os.path.exists(self.preview_img_path):
-            self.wgPreview.btnPreviewImg.setIcon(QtGui.QPixmap(QtGui.QImage(self.preview_img_path)))
-        else: self.wgPreview.btnPreviewImg.setIcon(QtGui.QPixmap(QtGui.QImage(Tank().get_img_path("lbl/default"))))
-
-        self.set_open_folder(self.file_dir)
-
-        if os.path.exists(self.load_file): self.fill_meta()
-        else: self.clear_meta()
+    # def change_lstFiles(self):
+    #     self.extension = self.wgLoad.lstFiles.currentItem().text().split('.')[-1]
+    #     self.file_name = self.wgLoad.lstFiles.currentItem().text().split('.')[0]
+    #
+    #     if self.extension in self.data['script'][TITLE]['img']:
+    #         self.preview_img_path = self.file_dir + '/' + self.wgLoad.lstFiles.currentItem().text()
+    #     else:
+    #         self.preview_img_path = self.file_dir + '/' + Tank().data_project['META']['dir'] + '/' + self.file_name + '.' + self.data['project']['EXTENSION']['thumbnail']
+    #
+    #     self.load_file = self.file_dir + '/' + self.wgLoad.lstFiles.currentItem().text()
+    #
+    #     if os.path.exists(self.preview_img_path):
+    #         self.wgPreview.btnPreviewImg.setIcon(QtGui.QPixmap(QtGui.QImage(self.preview_img_path)))
+    #     else: self.wgPreview.btnPreviewImg.setIcon(QtGui.QPixmap(QtGui.QImage(Tank().get_img_path("lbl/default"))))
+    #
+    #     self.set_open_folder(self.file_dir)
+    #
+    #     if os.path.exists(self.load_file): self.fill_meta()
+    #     else: self.clear_meta()
 
 
     #*********************************************************************
     # FUNCTIONS
     def fill_meta(self):
-        pass
+        self.combVariant.show()
+        self.combversion.show()
+        self.btnLoad.show()
+
+
         # self.wgPreview.lblTitle.setText(self.file_name)
         # self.wgPreview.lblDate.setText(str(datetime.datetime.fromtimestamp(os.path.getmtime(self.load_file))).split(".")[0])
         # self.wgPreview.lblSize.setText(str("{0:.2f}".format(os.path.getsize(self.load_file)/(1024*1024.0)) + " MB"))
