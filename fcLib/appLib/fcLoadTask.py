@@ -296,6 +296,10 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
             self.lstStep.addItems(sorted(tmp_content))
             self.lstStep.setCurrentRow(0)
 
+    @Slot()
+    def on_lstStep_itemSelectionChanged(self):
+        self.fill_meta()
+
     def change_lstStatus(self):
         if self.scene_steps < 5: part_path = ''
         else: part_path = self.wgLoad.lstAsset.currentItem().text() + '/'
@@ -331,7 +335,8 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
 
         self.load_file = self.file_dir + '/' + self.wgLoad.lstFiles.currentItem().text()
 
-        if os.path.exists(self.preview_img_path): self.wgPreview.btnPreviewImg.setIcon(QtGui.QPixmap(QtGui.QImage(self.preview_img_path)))
+        if os.path.exists(self.preview_img_path):
+            self.wgPreview.btnPreviewImg.setIcon(QtGui.QPixmap(QtGui.QImage(self.preview_img_path)))
         else: self.wgPreview.btnPreviewImg.setIcon(QtGui.QPixmap(QtGui.QImage(Tank().get_img_path("lbl/default"))))
 
         self.set_open_folder(self.file_dir)
