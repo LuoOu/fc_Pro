@@ -7,12 +7,11 @@
 #*********************************************************************
 
 
-name: BS
-
+name:  BS
 # 3D project path
-FC_SERVER_ROOT:  D:\Project\BS\BS
-FC_LOCAL_ROOT:  D:\Project\BS\BS
-#path: &PROJECT C:\Users\alexa\Dropbox\plex\project
+FC_SERVER_ROOT:  D:\Project\BS\SERVER\BS
+FC_LOCAL_ROOT:  D:\Project\BS\LOCAL\BS
+
 
 
 #*********************************************************************
@@ -122,8 +121,9 @@ FILE:
 # items.format(seq='sq010_sequence', entity='s010_shot',
 #              task='RIG', status='WORK', version='v001',
 #              frame='1001', user='ar', extension='mb')
-SCENES:
-  assets: "{entity}/{task}/{status}/{entity}_{task}_{version}.{extension}"
+PATH:
+  asset_root: "{MODULE}/{CLASS}/CLASS}_{ENTITY}"
+  step_path: "{STEP}/{TASK}/{VERSION}"
   shots : "{entity}/{task}/{status}/{entity}_{task}_{version}.{extension}"
   render: "{entity}/{task}/{status}/{entity}_{task}_{version}.{frame}.{extension}"
 
@@ -144,7 +144,9 @@ rights:
   - pipeline
   - production
   - user
-
+MODULE:
+  - Asset
+  - Shot
 
 TASK:
   assets: &ASSET_TASK

@@ -56,6 +56,16 @@ arLoad:
 fcLoadTask:
 
   style: "color: rgb(200, 200, 200);background-color: rgb(26, 30, 33);selection-background-color: rgb(60, 110, 190);"
+  Asset:
+    maya:
+      - Mod
+      - Rig
+      - Fur
+      - Cloth
+
+
+
+
 #*********************************************************************
 fcDesktop:
   active: True

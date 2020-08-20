@@ -43,9 +43,9 @@ class Code(object):
     def data_task(self):
         return self.get_code('TASK')
 
-    @property
-    def data_variant(self):
-        return self.get_code('VARIANT')
+    # @property
+    # def data_variant(self):
+    #     return self.get_code('VARIANT')
 
     @property
     def data_version(self):

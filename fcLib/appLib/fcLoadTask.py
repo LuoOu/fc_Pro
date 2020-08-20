@@ -31,7 +31,8 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2 import QtWidgets, QtCore, QtGui
 from fcLib.tankLib.configLib import Tank
-from fcLib.appLib.ui import ui_fcLocalTask
+from fcLib.fileLib import folder
+from fcLib.appLib.ui import ui_fcLoadTask
 
 
 def getMainWindow():
@@ -70,7 +71,7 @@ def getMainWindow():
         return hiero.ui.mainWindow()
 
 
-class FcLoadTask(QWidget, ui_fcLocalTask.Ui_fcLoadTask):
+class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
 
     def __init__(self, *args, **kwargs):
         super(FcLoadTask,self).__init__(*args, **kwargs)
@@ -169,11 +170,11 @@ class FcLoadTask(QWidget, ui_fcLocalTask.Ui_fcLoadTask):
         self.lstClass.clear()
         self.lstEntity.clear()
         self.lstStep.clear()
-        self.lstVariant.clear()
-        self.lstVariant.clear()
-        self.wgPreview.edtComment.setReadOnly(True)
-
-        self.clear_meta()
+        self.change_lstModule()
+        # self.change_lstClass()
+        # self.wgPreview.edtComment.setReadOnly(True)
+        #
+        # self.clear_meta()
 
         # for keys, items in self.data['project']['SCENES'].items():
         #     self.wgLoad.lstScene.addItem(keys)
@@ -239,56 +240,61 @@ class FcLoadTask(QWidget, ui_fcLocalTask.Ui_fcLoadTask):
 
     #*********************************************************************
     # CHANGE
-    def change_lstScene(self):
-        self.load_dir = self.data['project']['PATH'][self.wgLoad.lstScene.currentItem().text()]
-        tmp_content   = folder.get_file_list(self.load_dir)
+    def change_lstModule(self):
+        tmp_content = Tank().get_data('project')['MODULE']
 
-        self.scene_steps = len(self.data['project']['SCENES'][self.wgLoad.lstScene.currentItem().text()].split('/'))
-        if self.scene_steps < 5: self.wgLoad.lstAsset.hide()
-        else:
-            self.wgLoad.lstAsset.itemSelectionChanged.connect(self.change_lstAsset)
-            self.wgLoad.lstAsset.show()
-
-        self.wgLoad.lstSet.clear()
+        # self.scene_steps = len(self.data['project']['SCENES'][self.wgLoad.lstScene.currentItem().text()].split('/'))
+        # if self.scene_steps < 5: self.wgLoad.lstAsset.hide()
+        # else:
+        #     self.wgLoad.lstAsset.itemSelectionChanged.connect(self.change_lstAsset)
+        #     self.wgLoad.lstAsset.show()
+        #
+        self.lstModule.clear()
         if tmp_content:
-            self.wgLoad.lstSet.addItems(sorted(tmp_content))
-            self.wgLoad.lstSet.setCurrentRow(0)
+            self.lstModule.addItems(sorted(tmp_content))
+            self.lstModule.setCurrentRow(0)
 
-    def change_lstSet(self):
-        new_path    = self.load_dir + '/' + self.wgLoad.lstSet.currentItem().text()
+    @Slot()
+    def on_lstModule_itemSelectionChanged(self):
+        self.change_lstClass()
+
+
+    def change_lstClass(self):
+        new_path    = os.environ['FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text()
+        print new_path
+        tmp_content = folder.get_file_list(new_path)
+        print tmp_content
+
+        self.lstClass.clear()
+        if tmp_content:
+            self.lstClass.addItems(sorted(tmp_content))
+            self.lstClass.setCurrentRow(0)
+
+    @Slot()
+    def on_lstClass_itemSelectionChanged(self):
+        self.change_lstEntity()
+
+    def change_lstEntity(self):
+        new_path    = os.environ['FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text()
         tmp_content = folder.get_file_list(new_path)
 
-        if self.scene_steps < 5:
-            self.wgLoad.lstTask.clear()
-            if tmp_content:
-                self.wgLoad.lstTask.addItems(sorted(tmp_content))
-                self.wgLoad.lstTask.setCurrentRow(0)
-        else:
-            self.wgLoad.lstAsset.clear()
-            if tmp_content:
-                self.wgLoad.lstAsset.addItems(sorted(tmp_content))
-                self.wgLoad.lstAsset.setCurrentRow(0)
+        self.lstEntity.clear()
+        if tmp_content:
+            self.lstEntity.addItems(sorted(tmp_content))
+            self.lstEntity.setCurrentRow(0)
 
-    def change_lstAsset(self):
-        new_path    = self.load_dir + '/' + self.wgLoad.lstSet.currentItem().text() + '/' + self.wgLoad.lstAsset.currentItem().text()
+    @Slot()
+    def on_lstEntity_itemSelectionChanged(self):
+        self.change_lstStep()
+
+    def change_lstStep(self):
+        new_path    = os.environ['FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text()
         tmp_content = folder.get_file_list(new_path)
 
-        self.wgLoad.lstTask.clear()
+        self.lstStep.clear()
         if tmp_content:
-            self.wgLoad.lstTask.addItems(sorted(tmp_content))
-            self.wgLoad.lstTask.setCurrentRow(0)
-
-    def change_lstTask(self):
-        if self.scene_steps > 4: asset_content = '/' + self.wgLoad.lstAsset.currentItem().text()
-        else: asset_content = ''
-
-        new_path    = self.load_dir + '/' + self.wgLoad.lstSet.currentItem().text()  + asset_content + '/' + self.wgLoad.lstTask.currentItem().text()
-        tmp_content = folder.get_file_list(new_path)
-
-        self.wgLoad.lstStatus.clear()
-        if tmp_content:
-            self.wgLoad.lstStatus.addItems(sorted(tmp_content, reverse=True))
-            self.wgLoad.lstStatus.setCurrentRow(0)
+            self.lstStep.addItems(sorted(tmp_content))
+            self.lstStep.setCurrentRow(0)
 
     def change_lstStatus(self):
         if self.scene_steps < 5: part_path = ''
