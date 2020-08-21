@@ -99,14 +99,32 @@ def open_folder(path):
 def get_file_list(path, file_type='*', extension=False, exclude='*', add_path=False):
     if(os.path.exists(path)):
         getFile = []
-        try:    os.chdir(path)
-        except: print('Invalid dir: {}'.format(path))
+        try:
+            os.chdir(path)
+        except:
+            print('Invalid dir: {}'.format(path))
         for file_name in glob.glob(file_type):
-            if exclude in file_name: continue
-            if add_path:  file_name = os.path.normpath(('/').join([path,file_name]))
-            if extension: getFile.append(file_name)
-            else:         getFile.append((file_name.split('.')[0]))
+            if exclude in file_name:
+                continue
+            if add_path:
+                file_name = os.path.normpath(('/').join([path,file_name]))
+            if extension:
+                getFile.append(file_name)
+            else:
+                getFile.append((file_name.split('.')[0]))
         return getFile
+
+def cut_filesplit_list(filelist,split_type='_',serial = 1,extension=True):
+    newlist=[]
+    if filelist:
+        for i in filelist:
+            if extension:
+                print i
+                tmp = i.split('.')[0]
+                newlist.append(tmp.split(split_type)[serial])
+            else:
+                newlist.append(i.split(split_type)[serial])
+    return newlist
 
 ##
 # @BRIEF  GET ALL subfolders in the path

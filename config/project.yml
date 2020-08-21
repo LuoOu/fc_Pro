@@ -148,26 +148,22 @@ MODULE:
   - Asset
   - Shot
 
-TASK:
-  assets: &ASSET_TASK
-    - GEO
-    - TEX
-    - SHD
-    - RIG
+STEP:
+  Asset:
+    - Mod
+    - Fur
+    - Rig
+    - Cloth
 
-  shots: &SHOT_TASK
+  shots:
     - ANIM
     - LGT
     - FX
     - RENDER
     - COMP
 
-  render: *SHOT_TASK
 
-SET:
-  assets: &ASSET_SET
-    - char
-    - prop
-    - set
+
+
 
   # shots: &SHOT_SET

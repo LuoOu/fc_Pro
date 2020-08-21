@@ -262,7 +262,7 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
 
 
     def change_lstClass(self):
-        new_path    = os.environ['FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text()
+        new_path    = os.environ['FC_LOCAL_ROOT'] + '/' + self.lstModule.currentItem().text()
 
         tmp_content = folder.get_file_list(new_path)
 
@@ -277,7 +277,7 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
         self.change_lstEntity()
 
     def change_lstEntity(self):
-        new_path    = os.environ['FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text()
+        new_path    = os.environ['FC_LOCAL_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text()
         tmp_content = folder.get_file_list(new_path)
 
         self.lstEntity.clear()
@@ -290,12 +290,21 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
         self.change_lstStep()
 
     def change_lstStep(self):
-        new_path    = os.environ['FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text()
+        new_path    = os.environ['FC_LOCAL_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text()
         tmp_content = folder.get_file_list(new_path)
 
+        newtmp_content = []
+        if self.lstModule.currentItem().text() == 'Asset':
+            for i in tmp_content:
+                if i in Tank().get_data('project')['STEP'][self.lstModule.currentItem().text()]:
+                    newtmp_content.append(i)
+        else:
+            newtmp_content = tmp_content
+
+
         self.lstStep.clear()
-        if tmp_content:
-            self.lstStep.addItems(sorted(tmp_content))
+        if newtmp_content:
+            self.lstStep.addItems(sorted(newtmp_content))
             self.lstStep.setCurrentRow(0)
 
     @Slot()
@@ -306,8 +315,9 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
 
     def change_combVariant(self):
         new_path = os.environ[
-                       'FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text() + '/' + self.lstStep.currentItem().text()
+                       'FC_LOCAL_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text() + '/' + self.lstStep.currentItem().text()
         tmp_content = folder.get_file_list(new_path)
+
 
         self.combVariant.clear()
         if tmp_content:
@@ -321,12 +331,15 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
 
     def change_combversion(self):
         new_path = os.environ[
-                       'FC_SERVER_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text() + '/' + self.lstStep.currentItem().text() + '/' + self.combVariant.currentText()
-        tmp_content = folder.get_file_list(new_path)
+                       'FC_LOCAL_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text() + '/' + self.lstStep.currentItem().text() + '/' + self.combVariant.currentText()+"/work"
+        if self.lstModule.currentItem().text() == 'Asset':
+            file_type=self.lstEntity.currentItem().text()+'_'+self.lstStep.currentItem().text()+'_v[0-9][0-9][0-9].ma'
+            tmp_content = folder.get_file_list(new_path, file_type=file_type, extension=True)
+        newtmp_content = folder.cut_filesplit_list(tmp_content,"_",3,True)
 
         self.combversion.clear()
-        if tmp_content:
-            self.combversion.addItems(sorted(tmp_content))
+        if newtmp_content:
+            self.combversion.addItems(sorted(newtmp_content))
             self.combversion.setCurrentIndex(0)
     # def change_lstStatus(self):
     #     if self.scene_steps < 5: part_path = ''
@@ -378,6 +391,7 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
     def fill_meta(self):
         self.combVariant.show()
         self.combversion.show()
+        self.btnCreate.show()
         self.btnLoad.show()
 
 
