@@ -41,23 +41,20 @@ ENV:
   PATH: *NUKE_DIR
 
 
-#MENU:
-#  - Plex:
-#      open_scene_folder:   addCommand('Open Scene Folder', 'import pipefunc; pipefunc.open_folder(nuke.root().knob("name").value())')
-#      open_project_folder: addCommand('Open Project Folder', 'import pipefunc;import tank; pipefunc.open_folder(Tank().data_project["path"])')
-#
-#  - break:   addSeparator()
-#
-#  - Save:    "addCommand('Save', 'import menu; save()', 'ctrl+alt+s', 'save.ico')"
-#  - Load:    "addCommand('Load', 'import menu; load()', 'ctrl+alt+l', 'load.ico')"
-#
-#  - break:   "addSeparator()"
-#
-#  - arWrite: addCommand('arWrite', 'arWrite()', 'ctrl+alt+w', 'write.ico')
-#
-#  - break:   addSeparator()
-#
-#  - Report:  addCommand('Report', 'import pipefunc; pipefunc.help("report")', 'ctrl+alt+r', 'report.ico')
-#  - Help:    addCommand('Help', 'import pipefunc; pipefunc.help()', 'ctrl+alt+h', 'help.ico')
+MENU:
+  - Open Folder:
+      open_scene_folder:   addCommand('Open Scene Folder', 'import pipefunc; pipefunc.open_folder(nuke.root().knob("name").value())')
+      open_project_folder: addCommand('Open Project Folder', 'import pipefunc;import tank; pipefunc.open_folder(Tank().data_project["path"])')
 
-SETTINGS:
+  - breaka:   addSeparator()
+
+  - Load:    addCommand('Load', 'from fcLib.appLib import fcLoadTask;reload(fcLoadTask);fcLoadTask.start()')
+  - Save:    addCommand('Save', 'import menu; load()')
+  - Saveas:   addCommand('Save as','import menu; load()')
+  - breakb:   addSeparator()
+  - Tools:   addCommand('Tools','from fcLib.appLib import fcToolsPanel; fcToolsPanel.main()')
+
+  - reload:    addCommand('Reload PipelineMenu', 'import menu_utils; menu_utils.load_menus()')
+
+
+

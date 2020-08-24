@@ -73,13 +73,13 @@ TITLE = os.path.splitext(os.path.basename(__file__))[0]
 #
 # print('SETTINGS')
 #
-# RESOLUTION *********************************************************************
+# # RESOLUTION *********************************************************************
 # try:
 #     nuke.addFormat(RESOLUTION)
 #     nuke.knobDefault('Root.format', PROJECT_DATA['name'].replace(' ', ''))
 #     print('  {} ON  - {}'.format(chr(254), RESOLUTION))
 # except:
-#     LOG.error('  OFF - {}'.format(RESOLUTION), exc_info=True)
+#     # LOG.error('  OFF - {}'.format(RESOLUTION), exc_info=True)
 #     print('  {} OFF - {}'.format(chr(254), RESOLUTION))
 #
 # # FPS *********************************************************************

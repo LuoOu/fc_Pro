@@ -11,30 +11,27 @@
 import os
 import nuke
 
-# from fcLib.tankLib.configLib import Tank
-# from fcLib.dccLib.software import Software
-import menu_utils
+from fcLib.tankLib.configLib import Tank
+from fcLib.dccLib.software import Software
 
 #*********************************************************************
 # VARIABLE
 TITLE = os.path.splitext(os.path.basename(__file__))[0]
-
-menu_utils.load_menus()
-print "load"
 # LOG   = Tank().log.init(script=TITLE)
-# project_path = os.getenv('PROJECT_NAME').replace(' ','')
-# print project_path
-# if nuke.menu('Nuke').findItem(project_path):
-#     nuke.delete(nuke.menu('Nuke').findItem(project_path))
-#
-# menubar = nuke.menu("Nuke")
-# m = menubar.addMenu(Tank().data_project['name'])
-# Software().add_menu(m,'nuke')
-# #     print "reload"
-# # def load_menus():
-#
-#
-# load_menus()
+print TITLE
+
+def load_menus():
+    project_path = os.getenv('PROJECT_NAME').replace(' ', '')
+    # print project_path
+    # if nuke.menu('Nuke').findItem(project_path):
+    #     pass
+        # nuke.delete(nuke.menu('Nuke').findItem(project_path))
+
+    menubar = nuke.menu("Nuke")
+    m = menubar.addMenu(Tank().data_project['name'])
+    Software().add_menu(m, 'nuke')
+
+
 #*********************************************************************
 # FUNCTIONS
 # def add_gizmo_menu(menu):
@@ -67,17 +64,17 @@ print "load"
 
 #*********************************************************************
 # ACTIONS
-# def save():
-#     import arSave
-#     arSave.start()
-#
-#
-# def load():
-#     import arLoad
-#     arLoad.start()
-#
-#
-# #*********************************************************************
-# def arWrite():
-#     reload(write_node)
-#     nuke.createNode('arWrite')
+def save():
+    import arSave
+    arSave.start()
+
+
+def load():
+    import arLoad
+    arLoad.start()
+
+
+#*********************************************************************
+def arWrite():
+    reload(write_node)
+    nuke.createNode('arWrite')

@@ -119,7 +119,6 @@ def cut_filesplit_list(filelist,split_type='_',serial = 1,extension=True):
     if filelist:
         for i in filelist:
             if extension:
-                print i
                 tmp = i.split('.')[0]
                 newlist.append(tmp.split(split_type)[serial])
             else:

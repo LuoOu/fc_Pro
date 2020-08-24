@@ -25,6 +25,7 @@ TITLE = os.path.splitext(os.path.basename(__file__))[0]
 
 #*********************************************************************
 # CLASS
+
 import PySide2
 from PySide2.QtCore import *
 from PySide2.QtGui import *
@@ -33,11 +34,13 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from fcLib.tankLib.configLib import Tank
 from fcLib.fileLib import folder
 from fcLib.appLib.ui import ui_fcLoadTask
+from fcLib.dccLib import dcclanch
 
 
 def getMainWindow():
     '''This function should be overriden'''
-    if os.environ['Environment'] == 'Maya':
+    if os.environ['software'] == 'maya':
+        import maya.OpenMayaUI as omui
         win = omui.MQtUtil_mainWindow()
         ptr = wrapInstance(long(win), QtWidgets.QMainWindow)
         return ptr
@@ -85,13 +88,27 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
                 None
                 None
                 None
+        try:
+            if os.environ['software'] == 'maya':
+                import maya.OpenMayaUI as omui
+                import shiboken2
+                win = omui.MQtUtil.mainWindow()
+                ptr = shiboken2.wrapInstance(long(win), QtWidgets.QMainWindow)
+                self.setParent(ptr)
+                self.setWindowFlags(Qt.Window)
+        except:
+            pass
+
+
         self.setupUi(self)
+
+
         self.script_data = Tank().data_script
         self.setStyleSheet(self.script_data[TITLE]['style'])
         self.show()
 
         #
-        # # parent = getMainWindow()
+        # parent = getMainWindow()
         # #
         # #
         # #
@@ -156,7 +173,11 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
         # self.wgHeader.btnAccept.setText('Load')
         # self.wgHeader.btnOption.setText('Create')
         # self.wgHeader.setWindowIcon(QtGui.QIcon(Tank().get_img_path("btn/btn_load")))
-        #
+        try:
+            pass
+        except:
+            pass
+
         self.setup()
         #
         # self.resize_widget(self.wgLoad)
@@ -333,57 +354,49 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
         new_path = os.environ[
                        'FC_LOCAL_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text() + '/' + self.lstStep.currentItem().text() + '/' + self.combVariant.currentText()+"/work"
         if self.lstModule.currentItem().text() == 'Asset':
-            file_type=self.lstEntity.currentItem().text()+'_'+self.lstStep.currentItem().text()+'_v[0-9][0-9][0-9].ma'
+            file_type=self.lstEntity.currentItem().text()+'_'+ self.lstStep.currentItem().text()+'_' + self.combVariant.currentText()+'_v[0-9][0-9][0-9].ma'
             tmp_content = folder.get_file_list(new_path, file_type=file_type, extension=True)
-        newtmp_content = folder.cut_filesplit_list(tmp_content,"_",3,True)
+        newtmp_content = folder.cut_filesplit_list(tmp_content,"_",4,True)
 
         self.combversion.clear()
         if newtmp_content:
             self.combversion.addItems(sorted(newtmp_content))
             self.combversion.setCurrentIndex(0)
-    # def change_lstStatus(self):
-    #     if self.scene_steps < 5: part_path = ''
-    #     else: part_path = self.wgLoad.lstAsset.currentItem().text() + '/'
-    #
-    #     if not self.wgLoad.lstStatus.currentItem() or not self.wgLoad.lstTask.currentItem(): return
-    #
-    #     self.file_dir = self.load_dir + '/' + self.wgLoad.lstSet.currentItem().text() + '/' + part_path + self.wgLoad.lstTask.currentItem().text() + '/' + self.wgLoad.lstStatus.currentItem().text()
-    #     tmp_content   = folder.get_file_list(self.file_dir, extension=True)
-    #
-    #     self.wgLoad.lstFiles.clear()
-    #     if not tmp_content: return
-    #
-    #     file_list = []
-    #     for file in tmp_content:
-    #         if os.path.splitext(file)[1][1:] in self.software_keys: file_list.append(file)
-    #
-    #     if file_list:
-    #         if os.path.exists(self.file_dir + Tank().data_project['META']['file']):
-    #             self.file_data = Tank().get_yml_file(self.file_dir + Tank().data_project['META']['file'])
-    #         else: self.file_data = ''
-    #
-    #         self.wgLoad.lstFiles.addItems(sorted(file_list, reverse=True))
-    #         self.wgLoad.lstFiles.setCurrentRow(0)
 
-    # def change_lstFiles(self):
-    #     self.extension = self.wgLoad.lstFiles.currentItem().text().split('.')[-1]
-    #     self.file_name = self.wgLoad.lstFiles.currentItem().text().split('.')[0]
-    #
-    #     if self.extension in self.data['script'][TITLE]['img']:
-    #         self.preview_img_path = self.file_dir + '/' + self.wgLoad.lstFiles.currentItem().text()
-    #     else:
-    #         self.preview_img_path = self.file_dir + '/' + Tank().data_project['META']['dir'] + '/' + self.file_name + '.' + self.data['project']['EXTENSION']['thumbnail']
-    #
-    #     self.load_file = self.file_dir + '/' + self.wgLoad.lstFiles.currentItem().text()
-    #
-    #     if os.path.exists(self.preview_img_path):
-    #         self.wgPreview.btnPreviewImg.setIcon(QtGui.QPixmap(QtGui.QImage(self.preview_img_path)))
-    #     else: self.wgPreview.btnPreviewImg.setIcon(QtGui.QPixmap(QtGui.QImage(Tank().get_img_path("lbl/default"))))
-    #
-    #     self.set_open_folder(self.file_dir)
-    #
-    #     if os.path.exists(self.load_file): self.fill_meta()
-    #     else: self.clear_meta()
+    @Slot()
+    def on_combversion_currentIndexChanged(self):
+        self.change_labelPreview()
+
+    def change_labelPreview(self):
+        new_path = os.environ[
+                       'FC_LOCAL_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text() + '/' + self.lstStep.currentItem().text() + '/' + self.combVariant.currentText()+"/work"
+
+        if self.lstModule.currentItem().text() == 'Asset':
+            new_img =self.lstEntity.currentItem().text() + '_' + self.lstStep.currentItem().text() + '_' + self.combVariant.currentText()+ '_' + self.combversion.currentText() + '.png'
+            if os.path.exists(new_path+'/'+new_img):
+                self.labelPreview.setPixmap(QtGui.QPixmap(QtGui.QImage(new_path+'/'+new_img)).scaled(200, 200))
+            else:
+                self.labelPreview.setPixmap(
+                    QtGui.QPixmap(QtGui.QImage(Tank().get_img_path('btn/thumbnail'))).scaled(200, 200))
+
+    @Slot()
+    def on_btnLoad_clicked(self):
+        new_path = os.environ[
+                       'FC_LOCAL_ROOT'] + '/' + self.lstModule.currentItem().text() + '/' + self.lstClass.currentItem().text() + '/' + self.lstEntity.currentItem().text() + '/' + self.lstStep.currentItem().text() + '/' + self.combVariant.currentText() + "/work"
+
+        if self.lstModule.currentItem().text() == 'Asset':
+            new_file = self.lstEntity.currentItem().text() + '_' + self.lstStep.currentItem().text() + '_' + self.combVariant.currentText() + '_' + self.combversion.currentText() + '.ma'
+            if os.path.exists(new_path + '/' + new_file):
+                dcclanch.start('maya',new_path + '/' + new_file)
+        else:
+            from fcLib.appLib import fcPrompt
+            reload(fcPrompt)
+            self.fcPrompt = fcPrompt.FcPrompt()
+
+
+
+
+
 
 
     #*********************************************************************
@@ -391,7 +404,7 @@ class FcLoadTask(QWidget, ui_fcLoadTask.Ui_FcLoadTask):
     def fill_meta(self):
         self.combVariant.show()
         self.combversion.show()
-        self.btnCreate.show()
+        # self.btnCreate.show()
         self.btnLoad.show()
 
 
@@ -438,5 +451,4 @@ def create():
 def start():
     global main_widget
     main_widget = FcLoadTask()
-
 # create()

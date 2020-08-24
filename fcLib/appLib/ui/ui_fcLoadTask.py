@@ -7,7 +7,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from pyside.PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_FcLoadTask(object):
     def setupUi(self, FcLoadTask):

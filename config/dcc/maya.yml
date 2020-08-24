@@ -88,7 +88,7 @@ MENU:
   - divider: menuItem(p="{}", divider=True )
 #
 #  - break:  menuItem(p="{}", d=True)
-  - Load: menuItem(p="{}", l='Load')
+  - Load: menuItem(p="{}", l='Load',c='from fcLib.appLib import fcLoadTask;reload(fcLoadTask);fcLoadTask.start()')
 
   - Save: menuItem(p="{}", l='Save')
 
@@ -264,3 +264,7 @@ GROUPS:
     REVIEW_GRP:
       - proxy_GRP
       - playblast_GRP
+
+
+
+#loadTask
