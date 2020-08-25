@@ -11,10 +11,10 @@
 import os
 
 import maya.mel as mel
+import maya.cmds as cmds
 import pymel.core as pm
-
+from fcLib.tankLib.codeLib import Code
 from fcLib.tankLib.configLib import Tank
-from software import Software
 
 #*********************************************************************
 # VARIABLE
@@ -24,7 +24,7 @@ from software import Software
 
 #*********************************************************************
 # CLASS
-class Maya(Software):
+class Maya(object):
 
     _NAME = 'maya'
 
@@ -36,7 +36,8 @@ class Maya(Software):
         return pm.saveFile(file_path)
 
     def scene_save_as(self, file_path, setup_scene=False):
-        if setup_scene: self.scene_setup(file_path)
+        if setup_scene:
+            self.scene_setup(file_path)
         return pm.saveAs(file_path)
 
     def scene_open(self, file_path):
@@ -44,6 +45,46 @@ class Maya(Software):
 
     def scene_import(self, file_path):
         pass
+
+    def scene_judge(self):
+        self.scene_analysis()
+        # file_path = self.scene_path
+        # results = True
+        # if len(file_path) >= len(os.environ['FC_LOCAL_ROOT']):
+        #     pass
+        # else:
+        #     results = False
+        # print file_path[0:len(os.environ['FC_LOCAL_ROOT'])]
+        # if file_path[0:len(os.environ['FC_LOCAL_ROOT'])] == os.environ['FC_LOCAL_ROOT'].replace('\\','/'):
+        #     pass
+        # else:
+        #     results = False
+
+        # return results
+
+    def scene_analysis(self):
+        file_path = self.scene_path
+        if file_path == 0:
+            from fcLib.promptLib import errorLib
+            errorLib.file_not_saved('')
+        else:
+            if not file_path.startswith(os.environ['FC_LOCAL_ROOT'].replace('\\','/')):
+                from fcLib.promptLib import errorLib
+                errorLib.file_path_error('')
+            else:
+                tmp_str = file_path[len(os.environ['FC_LOCAL_ROOT'])+1:len(file_path)]
+                tmp_list = tmp_str.split('/')
+                if not len(tmp_list) == 7:
+                    from fcLib.promptLib import errorLib
+                    errorLib.file_path_error('')
+                else:
+                    Code().set_code(tmp_str, 1)
+
+
+
+
+
+
 
         # # reference or open
         # if ref or ".abc" in self.save_dir or ".obj" in self.save_dir or ".fbx" in self.save_dir:

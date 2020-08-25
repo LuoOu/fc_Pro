@@ -85,8 +85,9 @@ fcDesktop:
     nuke:    self.press_btnOpenNuke
     houdini: self.press_btnOpenHoudini
     rv:    self.press_btnOpenRv
-
-
+#*********************************************************************
+fcUpVersion:
+  style: "color: rgb(200, 200, 200);background-color: rgb(26, 30, 33);selection-background-color: rgb(60, 110, 190);"
 #*********************************************************************
 arWrite:
   active: True

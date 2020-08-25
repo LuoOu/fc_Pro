@@ -43,9 +43,9 @@ class Code(object):
     def data_task(self):
         return self.get_code('TASK')
 
-    # @property
-    # def data_variant(self):
-    #     return self.get_code('VARIANT')
+    @property
+    def data_variant(self):
+        return self.get_code('VARIANT')
 
     @property
     def data_version(self):
@@ -73,6 +73,14 @@ class Code(object):
 
         code = os.environ[tier]
         return code
+
+    def set_code(self, path_str ='' ,type = 1):
+        if type == 1:
+            os.environ['MODULE'] = path_str.split('/')[0]
+            os.environ['CLASS'] = path_str.split('/')[1]
+            os.environ['ENTITY'] = path_str.split('/')[2].split('_')[1]
+            os.environ['STEP'] = path_str.split('/')[3]
+            os.environ['VARIANT'] = path_str.split('/')[4]
 
 
 

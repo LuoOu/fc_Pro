@@ -94,7 +94,7 @@ MENU:
 
   - Saveas: menuItem(p="{}", l='Save as')
 
-  - Upversion: menuItem(p="{}", l='Up version')
+  - Upversion: menuItem(p="{}", l='Up Version',c='from fcLib.appLib import fcUpVersion;reload(fcUpVersion);fcUpVersion.start()')
 
   - divider: menuItem( p="{}", divider=True )
 
