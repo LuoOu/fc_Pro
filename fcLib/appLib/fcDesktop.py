@@ -95,8 +95,8 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         # menuItem = menu.addAction(QtGui.QIcon(Tank().get_img_path('btn/btn_report')), 'Report')
         # menuItem.triggered.connect(self.press_btnReport)
         #
-        # menuItem = menu.addAction(QtGui.QIcon(Tank().get_img_path('btn/btn_help')), 'Help')
-        # menuItem.triggered.connect(self.press_btnHelp)
+        menuItem = menu.addAction(QtGui.QIcon(Tank().get_img_path('btn/btn_upgrade')), 'Upgrade')
+        menuItem.triggered.connect(self.press_btnUpgrade)
         #
         menu.addSeparator()
 
@@ -139,6 +139,9 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         from fcLib.appLib import fcLoadTask
         reload(fcLoadTask)
         self.fcLoadTask = fcLoadTask.FcLoadTask()
+
+    def press_btnUpgrade(self):
+        print 'ok'
 
     #------------------------------
     def press_closeStartup(self):
