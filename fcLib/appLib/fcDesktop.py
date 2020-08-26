@@ -116,11 +116,11 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     def press_btnOpenLocalPath(self):
         folder.open_folder(self.project_data['FC_LOCAL_ROOT'])
     #------------------------------
-    def press_btnLoad(self):
-        pass
-        # import arLoad
-        # reload(arLoad)
-        # self.arLoad = arLoad.ArLoad()
+    # def press_btnLoad(self):
+    #     pass
+    #     # import arLoad
+    #     # reload(arLoad)
+    #     # self.arLoad = arLoad.ArLoad()
     #------------------------------
     def press_btnOpenMaya(self):
         dcclanch.start('maya')
@@ -141,7 +141,9 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.fcLoadTask = fcLoadTask.FcLoadTask()
 
     def press_btnUpgrade(self):
-        print 'ok'
+        from fcLib.appLib import fcUpgrade
+        reload(fcUpgrade)
+        self.fcUpgrade = fcUpgrade.FcUpgrade()
 
     #------------------------------
     def press_closeStartup(self):
