@@ -10,10 +10,10 @@ import sys
 import json
 import codecs
 import importlib
-try:
-    from PySide2 import QtCore, QtGui, QtWidgets
-except:
-    from PySide import QtCore, QtGui, QtWidgets
+
+import Qt
+print Qt.__binding__
+from Qt import QtCore, QtGui, QtWidgets
 
 from fcLib.tankLib.configLib import Tank
 

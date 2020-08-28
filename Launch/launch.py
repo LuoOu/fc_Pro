@@ -194,13 +194,12 @@ import argparse
 parser = argparse.ArgumentParser(description='Setup your pipeline and start scripts.')
 parser.add_argument('-so','--software', help='add software: nuke')
 parser.add_argument('-p', '--proxy', action='store_true')
-
 args = parser.parse_args()
 args.software ='desktop'
+
 Setup()
 # print os.getenv('PACKAGES_PATH')
 from fcLib.appLib import fcDesktop
-
 fcDesktop.start()
 
 

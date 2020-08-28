@@ -1,17 +1,20 @@
 # -*- coding: UTF-8 -*-
-#.@FileName:launch
+#.@FileName:fcDesktop
 #.@Date:2020-06-22:15:55
 #.@Aurhor:LuoOu
 
 import os
 import sys
-
 try:
-    from PySide2 import QtWidgets, QtGui
+    # import Qt
+    from Qt import QtWidgets, QtGui
+    print Qt.__binding__
 except:
     pyside_path = os.path.dirname(os.path.dirname(__file__))
-    sys.path.append(pyside_path + "/site-packages/pyside")
-    from PySide2 import QtWidgets, QtGui
+    sys.path.append(pyside_path + "/site-packages")
+    import Qt
+    from Qt import QtWidgets, QtGui
+    print Qt.__binding__
 
 
 

@@ -25,11 +25,12 @@ TITLE = os.path.splitext(os.path.basename(__file__))[0]
 
 #*********************************************************************
 # CLASS
-import PySide2
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-from PySide2 import QtWidgets, QtCore, QtGui
+import Qt
+print Qt.__binding__
+from Qt.QtCore import *
+from Qt.QtGui import *
+from Qt.QtWidgets import *
+from Qt import QtWidgets, QtCore, QtGui
 from fcLib.appLib.ui import ui_fcUpgrade
 from fcLib.tankLib.configLib import Tank
 

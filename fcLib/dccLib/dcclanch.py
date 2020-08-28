@@ -19,6 +19,22 @@ def start(software, open_file=''):
             cmd = '{} -file "{}"'.format(cmd, open_file)
         elif software == 'max' or software == 'houdini':
             cmd = '"{}" "{}"'.format(cmd, open_file)
-    subprocess.Popen(cmd, shell=True, env=os.environ)
+
+    _env = os.environ
+    _path = []
+    for i in _env['path'].split(';'):
+        if i.find('pySideLib') == -1:
+            _path.append(i)
+    _env['path'] = ';'.join(_path)
+
+    _pypath = []
+    for i in _env['PYTHONPATH'].split(';'):
+        if i.find('pySideLib') == -1:
+            _path.append(i)
+    _env['PYTHONPATH'] = ';'.join(_path)
+
+    # print _env['PYTHONPATH']
+    # print type(_env)
+    subprocess.Popen(cmd, shell=True, env=_env)
 
 

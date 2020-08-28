@@ -6,8 +6,9 @@
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
-
-from PySide2 import QtCore, QtGui, QtWidgets
+import Qt
+print Qt.__binding__
+from Qt import QtCore, QtGui, QtWidgets
 
 class Ui_FcPrompt(object):
     def setupUi(self, FcPrompt):

@@ -4,21 +4,16 @@
 #.@Aurhor:LuoOu
 import os
 import sys
-try:
 
-    from PySide2.QtCore import *
-    from PySide2.QtGui import *
-    from PySide2.QtWidgets import *
-except ImportError:
-    from PySide.QtCore import *
-    from PySide.QtGui import *
-    from PySide.QtWidgets import *
-else:
-    import Qt
-    from Qt import QtWidgets, QtCore, QtGui
-    from Qt.QtCore import *
-    from Qt.QtGui import *
-    from Qt.QtWidgets import *
+
+import Qt
+print Qt.__binding__
+from Qt.QtCore import *
+from Qt.QtGui import *
+from Qt.QtWidgets import *
+from Qt import QtWidgets, QtCore, QtGui
+
+
 # try:
 #     from PySide2.QtCore import *
 #     from PySide2.QtGui import *
