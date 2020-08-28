@@ -33,8 +33,6 @@ def start(software, open_file=''):
             _path.append(i)
     _env['PYTHONPATH'] = ';'.join(_path)
 
-    # print _env['PYTHONPATH']
-    # print type(_env)
     subprocess.Popen(cmd, shell=True, env=_env)
 
 
