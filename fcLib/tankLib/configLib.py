@@ -82,6 +82,10 @@ class Tank(object):
     def data_notice(self):
         return self.get_data('notice')
 
+    @property
+    def data_pipeline(self):
+        return self.get_data('pipeline')
+
 
     #*********************************************************************
     # GET ANDDATA

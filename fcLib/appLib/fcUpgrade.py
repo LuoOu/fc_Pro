@@ -30,10 +30,10 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 from PySide2 import QtWidgets, QtCore, QtGui
-from fcLib.appLib.ui import ui_fcPrompt
+from fcLib.appLib.ui import ui_fcUpgrade
 from fcLib.tankLib.configLib import Tank
 
-class FcUpgrade(QWidget, ui_fcPrompt.Ui_FcPrompt):
+class FcUpgrade(QWidget, ui_fcUpgrade.Ui_FcUpgrade):
 
     def __init__(self, *args, **kwargs):
         super(FcUpgrade,self).__init__(*args, **kwargs)
@@ -51,17 +51,36 @@ class FcUpgrade(QWidget, ui_fcPrompt.Ui_FcPrompt):
         self.script_data = Tank().data_script
         self.setStyleSheet(self.script_data[TITLE]['style'])
         self.show()
+        self.setup()
 
 
     @Slot()
     def on_btnUpgrade_clicked(self):
-        main_widget.close()
+        self.listWidget.clear()
+        self.listWidget.show()
+        self.progressBar.show()
+        self.progressBar.reset()
+        self.labtext.hide()
+        self.lineUpgradePath.hide()
 
-    # def setup(self,title, text, prompt):
-    #     self.setWindowTitle(title)
-    #     self.labelText.setText(text)
-    #     self.linPrint.setText(prompt)
-        # FILL COMBO BOX -------------------------------
+        self.listWidget.addItem('start the update.....')
+
+        self.listWidget.addItem('Check to see if the update package exists......')
+        UpgradePath = self.lineUpgradePath.text()
+        if os.path.exists(UpgradePath):
+            pass
+        else:
+            self.listWidget.addItem('The update pack does not exist:'+UpgradePath)
+
+
+
+
+    def setup(self):
+        self.listWidget.hide()
+        self.progressBar.hide()
+        from fcLib.tankLib.configLib import Tank
+        tmp_path = Tank().data_pipeline['UPGRADE_PACKAGE']
+        self.lineUpgradePath.setText(tmp_path)
 
 
 

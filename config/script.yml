@@ -89,6 +89,9 @@ fcDesktop:
 fcUpVersion:
   style: "color: rgb(200, 200, 200);background-color: rgb(26, 30, 33);selection-background-color: rgb(60, 110, 190);"
 #*********************************************************************
+fcUpgrade:
+  style: "color: rgb(200, 200, 200);background-color: rgb(26, 30, 33);selection-background-color: rgb(0, 0, 0);"
+#*********************************************************************
 arWrite:
   active: True
   renderthreads: 12

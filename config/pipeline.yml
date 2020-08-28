@@ -36,6 +36,8 @@ PRO_PACKAGES:
 
     - render: C:\fc_Pro\packages\aces
 
+UPGRADE_PACKAGE: L:\fc_Pro
+
 
 
 
