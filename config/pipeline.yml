@@ -11,7 +11,7 @@
 
 PIPELINE:
   name:    fcPipeline
-  version: 5.0.0
+  version: 5.0.1
 # SETS DATABASE type local
 DATABASE:  local
 
